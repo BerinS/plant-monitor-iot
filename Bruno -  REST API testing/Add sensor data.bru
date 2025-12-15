@@ -1,0 +1,15 @@
+meta {
+  name: Add sensor data
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5209/api/sensor
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
