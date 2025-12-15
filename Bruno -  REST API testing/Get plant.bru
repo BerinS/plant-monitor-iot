@@ -1,0 +1,15 @@
+meta {
+  name: Get plant
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:5209/api/sensor/id/history
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
