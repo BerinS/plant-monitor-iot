@@ -18,6 +18,15 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Public": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false, 
+      "applicationUrl": "http://0.0.0.0:5000", // listen on ALL interfaces
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
