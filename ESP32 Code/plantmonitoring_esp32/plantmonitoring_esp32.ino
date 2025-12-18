@@ -1,13 +1,17 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+// --- ADDED THIS LINE ---
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
+// -----------------------
 
 // ================= config =================
 
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "Asset";
+const char* password = "behasase2";
 
-const char* serverUrl = "http://:5000/api/sensor";
-const char* apiToken  = "";
+const char* serverUrl = "http://192.168.1.13:5000/api/sensor";
+const char* apiToken  = "55555555-aaaa-bbbb-cccc-1234567890ab";
 
 // Calibration Values
 const int DRY_VALUE = 4095; // 0% Moisture
@@ -16,7 +20,7 @@ const int WET_VALUE = 1200; // 100% Moisture
 // Pin Definitions
 const int SENSOR_PIN = 36;  // AO signal (VP)
 const int POWER_PIN  = 17;  // VCC GPIO 17
-
+const int BUTTON_PIN = 27;  // Button connected to GPIO 27 and GND
 
 unsigned long lastTime = 0;
 // send data every 15 min (900000 ms)
@@ -26,31 +30,38 @@ int getMoisturePercentage();
 void sendSensorData();
 
 void setup() {
+  // Disable Brownout Detector
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+
   Serial.begin(115200);
 
   // delay to let the serial monitor start up
   delay(1000); 
-  Serial.println("\n\n 30-MINUTE VERSION \n");
-  
+  Serial.println("\n\n 30-MINUTE VERSION WITH BUTTON \n");
+   
   // sensor power pin
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, LOW); 
 
+  // HIGH by default. 
+  // pressing the button connects it to GND, making it LOW.
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
   // connect to WiFi
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
-  
+   
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  
+   
   Serial.println("");
   Serial.print("Connected! IP: ");
   Serial.println(WiFi.localIP());
-  
+   
   // RUN ONCE IMMEDIATELY (So you know it works)
-  
+   
   if(WiFi.status() == WL_CONNECTED){
      sendSensorData(); 
   }
@@ -60,6 +71,22 @@ void setup() {
 }
 
 void loop() {
+  // check for button
+  if (digitalRead(BUTTON_PIN) == LOW) {
+    Serial.println("\n--- Button Press Detected ---");
+    
+    if(WiFi.status() == WL_CONNECTED){
+      sendSensorData();
+    }
+    
+    // reset timer 
+    lastTime = millis();
+    
+    // delay to prevent detecting the same press multiple times 
+    delay(1000); 
+  }
+  // -----------------------------------
+
   // timer Logic
   if ((millis() - lastTime) > timerDelay) {
     
@@ -81,9 +108,9 @@ void loop() {
 int getMoisturePercentage() {
   digitalWrite(POWER_PIN, HIGH);
   delay(10); // wait for electricity to stabilize
-  
+   
   int raw = analogRead(SENSOR_PIN);
-  
+   
   digitalWrite(POWER_PIN, LOW);
 
   Serial.print("Raw: ");
@@ -110,7 +137,7 @@ void sendSensorData() {
     // prepare HTTP
     WiFiClient client;
     HTTPClient http;
-    
+     
     http.begin(client, serverUrl);
     http.addHeader("Content-Type", "application/json");
 
@@ -127,6 +154,6 @@ void sendSensorData() {
       Serial.print("Error sending POST: ");
       Serial.println(httpResponseCode);
     }
-    
+     
     http.end();
 }
