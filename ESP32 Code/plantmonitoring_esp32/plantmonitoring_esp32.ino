@@ -1,20 +1,18 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-// --- ADDED THIS LINE ---
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-// -----------------------
 
-// ================= config =================
+// config
 
-const char* ssid = "Asset";
-const char* password = "behasase2";
+const char* ssid = "";
+const char* password = "";
 
-const char* serverUrl = "http://192.168.1.13:5000/api/sensor";
-const char* apiToken  = "55555555-aaaa-bbbb-cccc-1234567890ab";
+const char* serverUrl = "";
+const char* apiToken  = "";
 
 // Calibration Values
-const int DRY_VALUE = 4095; // 0% Moisture
+const int DRY_VALUE = 4000; // 0% Moisture
 const int WET_VALUE = 1200; // 100% Moisture
 
 // Pin Definitions
@@ -30,7 +28,7 @@ int getMoisturePercentage();
 void sendSensorData();
 
 void setup() {
-  // Disable Brownout Detector
+  // disable brownout detector
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 
   Serial.begin(115200);
@@ -44,7 +42,7 @@ void setup() {
   digitalWrite(POWER_PIN, LOW); 
 
   // HIGH by default. 
-  // pressing the button connects it to GND, making it LOW.
+  // pressing the button connects it to GND
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   // connect to WiFi
@@ -60,7 +58,7 @@ void setup() {
   Serial.print("Connected! IP: ");
   Serial.println(WiFi.localIP());
    
-  // RUN ONCE IMMEDIATELY (So you know it works)
+  // runs once on startup
    
   if(WiFi.status() == WL_CONNECTED){
      sendSensorData(); 
@@ -87,7 +85,7 @@ void loop() {
   }
   // -----------------------------------
 
-  // timer Logic
+  // timer logic
   if ((millis() - lastTime) > timerDelay) {
     
     // Check WiFi before trying to send
