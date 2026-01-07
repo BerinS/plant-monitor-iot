@@ -6,10 +6,10 @@
 // config
 
 const char* ssid = "";
-const char* password = "";
+const char* password = "***REMOVED***";
 
-const char* serverUrl = "";
-const char* apiToken  = "";
+const char* serverUrl = "http://192.168.1.13:5000/api/sensor";
+const char* apiToken  = "55555555-aaaa-bbbb-cccc-1234567890ab";
 
 // Calibration Values
 const int DRY_VALUE = 4000; // 0% Moisture

@@ -1,0 +1,77 @@
+$mobile-break: 768px;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-color-green);
+  width: 250px;
+}
+
+.brand {
+  padding: 20px;
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: var(--text-color-light);
+  font-weight: 800;
+  padding-bottom: 3rem;
+  
+}
+
+a {
+  display: flex;       
+  align-items: center; 
+  gap: 12px;          
+  
+  padding: 15px 20px;
+  text-decoration: none;
+  color: var(--text-color-light);
+  font-size: 0.95rem;
+  transition: background 0.1s ease;
+
+  &:hover { 
+    background: var(--primary-color-light); 
+  }
+  
+  &.active {
+    background: #ffff;
+    color: var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    font-weight: 600;
+  }
+
+  lucide-icon {
+    display: flex; 
+  }
+}
+
+.close-btn {
+  margin-top: auto;
+  padding: 20px;
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); 
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  
+  display: none; // hidden on desktop
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: rgba(0,0,0,0.1);
+  }
+}
+
+@media (max-width: $mobile-break) {
+  a {
+    font-size: 1.2rem;
+  }
+
+  .close-btn  {
+    font-size: 1.2rem;
+  }
+}
