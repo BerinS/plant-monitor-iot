@@ -1,0 +1,57 @@
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem; 
+
+  // MOBILE DEFAULT
+  grid-template-columns: 1fr; 
+  
+  // DESKTOP 
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(150px, auto);// Base height for a "1 row" card
+  }
+}
+
+.widget-card {
+  background: var(--bg-color-light);
+  border-radius: 12px;
+  padding: 1.3rem;
+  box-shadow: rgba(17, 17, 26, 0.027) 0px 1px 0px, rgba(17, 17, 26, 0.055) 0px 0px 5px;
+  display: flex;
+  flex-direction: column;
+  
+  
+  // MOBILE: full width
+  grid-column: span 1;
+  grid-row: auto; 
+  min-height: 180px; 
+
+  @media (min-width: 768px) {
+    grid-column: span var(--col-span, 3); 
+    grid-row: span var(--row-span, 1);
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  h3 { margin: 0; font-size: 1.1rem; color: #444; }
+  button { border: none; background: none; cursor: pointer; font-size: 1.2rem; }
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9; 
+  border-radius: 8px;
+  color: #888;
+}
+
+.big-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #3f51b5;
+}
