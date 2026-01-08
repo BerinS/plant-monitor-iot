@@ -8,6 +8,7 @@ export class PlantService {
   private apiUrl = 'http://192.168.1.13:5000/api/plants'; // ip of the pc which runs the backend
 
   getPlants() {
-    return this.http.get<Plant[]>(this.apiUrl);
+    console.log("Fetching plants from API:", this.apiUrl);      
+    return this.http.get<Plant[]>(this.apiUrl);    
   }
 }

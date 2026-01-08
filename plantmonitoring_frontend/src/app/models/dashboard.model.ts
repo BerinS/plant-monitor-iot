@@ -10,7 +10,7 @@ export interface Plant {
 
 export interface DashboardWidget {
   id: string | number;
-  type: 'plant' | 'chart' | 'list'; 
+  type: 'plant' | 'chart' | 'list' | 'spacer' | 'noplants'; 
   cols: number;
   rows: number;
   title?: string;
