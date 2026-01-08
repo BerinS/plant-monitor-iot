@@ -1,0 +1,59 @@
+<div class="dashboard-grid">    
+  @for (widget of allWidgets(); track widget.id) {
+    
+    @if (widget.type === 'plant') {
+      <div class="widget-card" [style.--col-span]="widget.cols" [style.--row-span]="widget.rows">
+        <app-plant-card-dash [plant]="widget.data"></app-plant-card-dash>
+      </div>
+    } 
+    
+    @else if (widget.type === 'spacer') {
+      <div [style.--col-span]="widget.cols" class="spacer"></div>
+    }
+
+    @else if (widget.type === 'noplants') {          
+      <div [style.--col-span]="widget.cols" [style.--row-span]="widget.rows" class="noplants">            
+          <lucide-icon [img]="Sprout" size="30"></lucide-icon>
+          No plants to show            
+      </div>
+    }
+
+    @else {
+      <div class="widget-card" [style.--col-span]="widget.cols" [style.--row-span]="widget.rows">
+        <div class="card-header">
+          <h3>{{ widget.title }}</h3>
+          @if (widget.id === 'hist') {
+            <select 
+              class="header-select"
+              [ngModel]="selectedHistoryPlantId()"
+              (ngModelChange)="onHistoryPlantChanged($event)">
+              
+              @for (plant of plants(); track plant.id) {
+                <option [value]="plant.id">{{ plant.name }}</option>
+              }
+            </select>
+          }
+        </div>
+
+        <div class="card-body">
+          
+          @if (widget.id === 'hist') {               
+            @if (widget.data && widget.data.length > 0) {
+                <app-history-chart [historyData]="widget.data"></app-history-chart>
+              } 
+
+              @else {
+                <div class="empty-history">                      
+                  <small>Add a plant to see moisture history</small>
+                </div>
+              }
+          }           
+          @else {
+            {{ widget.type }} content...
+          }
+
+        </div>
+      </div>
+    }
+  }
+</div>

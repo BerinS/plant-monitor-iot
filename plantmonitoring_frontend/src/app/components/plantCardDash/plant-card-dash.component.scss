@@ -62,9 +62,24 @@ h3 {
   background: #e6f4ea; color: #1e8e3e; 
   font-weight: bold;
   
-  &.low {
-    background: #fce8e6; color: #c5221f; 
+@keyframes breathe-red {
+  0% {
+    box-shadow: 0 0 4px 0px rgba(255, 51, 51, 0.3);
   }
+  50% {
+    box-shadow: 0 0 16px 3px rgba(255, 51, 51, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 4px 0px rgba(255, 51, 51, 0.3);
+  }
+}
+
+&.low {
+  background: #fce8e6; 
+  color: #ca1b18; 
+  
+  animation: breathe-red 2s ease-in-out infinite;
+}
 }
 
 .moisture-num {
