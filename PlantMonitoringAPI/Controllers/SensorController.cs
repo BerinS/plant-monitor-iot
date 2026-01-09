@@ -49,7 +49,7 @@ namespace PlantMonitoringAPI.Controllers
         }
 
         [HttpGet("{plantId}/history")]
-        public async Task<ActionResult> GetHistory(int plantId)
+        public async Task<ActionResult> GetHistory(int plantId, [FromQuery] int hours = 24)
         {
             var plant = await _context.Plants.FindAsync(plantId);
             if (plant == null)
@@ -57,10 +57,12 @@ namespace PlantMonitoringAPI.Controllers
                 return NotFound(new { message = "Plant not found" });
             }
 
+            // calculate cutoff time     
+            var cutoffTime = DateTime.UtcNow.AddHours(-hours);
+
             var history = await _context.SensorData
-                .Where(s => s.PlantId == plantId)
-                .OrderByDescending(s => s.MeasuredAt)
-                .Take(50)
+                .Where(s => s.PlantId == plantId && s.MeasuredAt >= cutoffTime) // filter by time
+                .OrderByDescending(s => s.MeasuredAt) 
                 .Select(s => new SensorHistoryDto
                 {
                     Value = s.MoistureValue,

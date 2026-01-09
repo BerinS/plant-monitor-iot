@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule, Color, ScaleType } from '@swimlane/ngx-charts'; // Import this
 import { Plant } from '../../models/dashboard.model';
@@ -8,18 +8,33 @@ import { Plant } from '../../models/dashboard.model';
   standalone: true,
   imports: [CommonModule, NgxChartsModule],
   template: `
-    <div class="chart-container">      
-      @if (chartData().length > 0) {
-        <ngx-charts-area-chart
-          [results]="chartData()"
-          [gradient]="true"
-          [scheme]="colorScheme"
-          [xAxis]="true"
-          [yAxis]="true"          
-          xAxisLabel="Time"
-          [autoScale]="true">
-        </ngx-charts-area-chart>
-      }
+    <div class="chart-wrapper">
+      <div class="controls">
+        <div class="time-toggles">
+          @for (opt of timeOptions; track opt.value) {
+            <button 
+              [class.active]="selectedRange() === opt.value"
+              (click)="onRangeSelect(opt.value)">
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="chart-container">      
+        @if (historyData().length > 0) {
+           <ngx-charts-area-chart
+             [results]="chartData()"
+             [gradient]="true"
+             [scheme]="colorScheme"
+             [xAxis]="true"
+             [yAxis]="true"          
+             [autoScale]="true">
+           </ngx-charts-area-chart>
+        } @else {
+           <p class="no-data">No data for this time range</p>
+        }
+      </div>
     </div>
   `,
   styleUrls: ['./history-chart-component.scss']
@@ -27,6 +42,18 @@ import { Plant } from '../../models/dashboard.model';
 export class HistoryChartComponent {
   // raw list from API
   historyData = input.required<any[]>(); 
+  selectedRange = input<number>(24);
+  rangeChange = output<number>();
+
+  timeOptions = [
+    { label: '24H', value: 24 },
+    { label: '7D', value: 168 },
+    { label: '30D', value: 720 }
+  ];
+
+  onRangeSelect(hours: number) {
+    this.rangeChange.emit(hours);
+  }
 
   chartData = computed(() => {
     const rawData = this.historyData();
