@@ -13,8 +13,8 @@ export class PlantService {
     return this.http.get<Plant[]>(url);    
   }
 
-  getSensorHistory(plantId: number) {
-    const url = `${this.apiUrl}/api/sensor/${plantId}/history`;
+  getSensorHistory(plantId: number, hours: number = 24) {
+    const url = `${this.apiUrl}/api/sensor/${plantId}/history?hours=${hours}`;
     return this.http.get<any[]>(url);
   }
 }

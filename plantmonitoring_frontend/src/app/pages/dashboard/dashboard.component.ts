@@ -20,10 +20,30 @@ export class DashboardComponent {
   private plantService = inject(PlantService);
 
   // Signals
-  // toSignal automatically subscribes and unsubscribes
   plants = toSignal(this.plantService.getPlants(), { initialValue: [] });
   historyData = signal<any[]>([]);  
   selectedHistoryPlantId = signal<number>(0);
+  selectedTimeRange = signal<number>(24);
+
+
+  fetchHistory(plantId: number, range: number) {
+    this.plantService.getSensorHistory(plantId, range).subscribe(data => {
+      this.historyData.set(data);
+    });
+  }
+
+  // called by dropdown for selecting plant
+  onHistoryPlantChanged(newId: number) {
+    this.selectedHistoryPlantId.set(Number(newId));
+    // Fetch with new ID but keep existing range
+    this.fetchHistory(Number(newId), this.selectedTimeRange());
+  }
+
+  onTimeRangeChanged(newRange: number) {
+    this.selectedTimeRange.set(newRange);
+    // Fetch with existing ID but new range
+    this.fetchHistory(this.selectedHistoryPlantId(), newRange);
+  }
 
   constructor() {
     effect(() => {
@@ -34,22 +54,9 @@ export class DashboardComponent {
         
         // fetch history for first plant
         this.selectedHistoryPlantId.set(firstPlant.id);
-        this.fetchHistory(firstPlant.id)
+        this.fetchHistory(firstPlant.id, 24)
       }
     });
-  }
-
-  fetchHistory(plantId: number) {
-    this.plantService.getSensorHistory(plantId).subscribe(data => {
-      console.log('Fetched history for plant id:', plantId, data);
-      this.historyData.set(data); 
-    });
-  }
-
-  // called by dropdown for selecting plant
-  onHistoryPlantChanged(newId: number) {
-    this.selectedHistoryPlantId.set(Number(newId)); // Ensure it is a number
-    this.fetchHistory(Number(newId));
   }
 
   staticWidgets = signal<DashboardWidget[]>([

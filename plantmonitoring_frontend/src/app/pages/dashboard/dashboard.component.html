@@ -22,6 +22,7 @@
       <div class="widget-card" [style.--col-span]="widget.cols" [style.--row-span]="widget.rows">
         <div class="card-header">
           <h3>{{ widget.title }}</h3>
+
           @if (widget.id === 'hist' && widget.data.length > 0) {
             <select 
               class="header-select"
@@ -39,7 +40,11 @@
           
           @if (widget.id === 'hist') {               
             @if (widget.data && widget.data.length > 0) {
-                <app-history-chart [historyData]="widget.data"></app-history-chart>
+                <app-history-chart 
+                  [historyData]="widget.data"
+                  [selectedRange]="selectedTimeRange()" 
+                  (rangeChange)="onTimeRangeChanged($event)">
+                </app-history-chart>
               } 
 
               @else {
