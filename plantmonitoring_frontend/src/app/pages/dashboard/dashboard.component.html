@@ -23,7 +23,7 @@
         <div class="card-header">
           <h3>{{ widget.title }}</h3>
 
-          @if (widget.id === 'hist' && widget.data.length > 0) {
+          @if (widget.id === 'hist' ) {
             <select 
               class="header-select"
               [ngModel]="selectedHistoryPlantId()"
@@ -34,12 +34,13 @@
               }
             </select>
           }
+          
         </div>
 
         <div class="card-body">
           
           @if (widget.id === 'hist') {               
-            @if (widget.data && widget.data.length > 0) {
+            @if (widget.data) {
                 <app-history-chart 
                   [historyData]="widget.data"
                   [selectedRange]="selectedTimeRange()" 
@@ -52,10 +53,17 @@
                   <small>Add a plant to see moisture history</small>
                 </div>
               }
-          }           
-          @else {
-            {{ widget.type }} content...
-          }
+          }   
+
+          @if (widget.id === 'health') {   
+            @if(widget.data){
+              <app-health-widget
+                [sensors]="widget.data">
+              </app-health-widget>
+            }             
+          }        
+
+          
 
         </div>
       </div>

@@ -16,3 +16,10 @@ export interface DashboardWidget {
   title?: string;
   data?: any;
 }
+
+export interface SensorHealth {
+  id: number;
+  macAddress: string;
+  assignedPlant: string; 
+  lastContact: string;  
+}

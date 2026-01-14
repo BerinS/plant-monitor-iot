@@ -1,0 +1,128 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: rgb(255, 255, 255);
+  --offline-color: #cc4442;
+  --online-color: #12a35f;
+}
+
+.health-container {
+  display: flex;
+  flex-direction: column; 
+  height: 100%;
+  padding: 0rem;
+  box-sizing: border-box; 
+}
+
+.summary-panel{
+  padding: 0;
+  color: #555; 
+}
+
+.summary-text p{
+  margin: 0;
+  padding-bottom: 1rem;
+  font-size: small;
+  color: #999999;  
+}
+
+.node-card{
+  color: #555; 
+}
+
+.card-header {
+  flex: 0 0 auto; 
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+
+  .icon { font-size: 1.5rem; }
+  
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    h2 { margin: 0; font-size: 1rem; color: #333; font-weight: 600; }
+    small { color: #888; font-size: 0.8rem; }
+  }
+
+}
+
+.node-grid {
+  flex: 1; // fill remaining height
+  overflow-y: auto; // scroll if needed
+  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.node-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 70px; 
+  transition: ease-in-out 0.1s;
+
+  &:hover { border-color: #bbb; }
+
+  &.offline {
+    border-left: 3px solid var(--offline-color); 
+  }
+  
+  &.online {
+    border-left: 3px solid var(--online-color); 
+  }
+}
+
+.badge{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &.red {
+    .circle{
+      color: var(--offline-color);
+      padding-top: 3px;
+    }
+  }
+  
+  &.green {
+    .circle{
+      color: var(--online-color);
+      padding-top: 3px;
+    }
+  }
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+
+  .name { font-weight: 600; color: #444; font-size: 0.9rem; }
+  .mac  { font-size: 0.7rem; color: #999; font-family: monospace; }
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.75rem;
+  color: #666;
+  
+  .time { font-style: italic; }
+}
