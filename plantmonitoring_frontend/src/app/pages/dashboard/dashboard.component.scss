@@ -1,6 +1,6 @@
 .dashboard-grid {
   display: grid;
-  gap: 1.5rem; 
+  gap: 1.4rem; 
 
   // MOBILE DEFAULT
   grid-template-columns: 1fr; 
@@ -34,7 +34,7 @@
   color: #818181;
   border-radius: 12px;
   border: 1px dashed #c0c0c0b4;
-  min-height: 100px; // Ensure it has some height
+  min-height: 100px; 
 
   // show on desktop
   @media (min-width: 768px) {

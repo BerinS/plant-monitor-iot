@@ -21,21 +21,23 @@ import { LucideAngularModule, CircleDot} from 'lucide-angular';
         @for (sensor of stats().nodes; track sensor.id) {
           <div class="node-card" [class.offline]="!sensor.isOnline" [class.online]="sensor.isOnline">
             <div class="card-header">
-              <span class="mac-address">{{ sensor.mac }}</span>
+              <span class="mac-address">Mac: {{ sensor.mac }}</span>
               <span class="badge" [class.red]="!sensor.isOnline" [class.green]="sensor.isOnline">
-                <div class="circle"> <lucide-icon [img]="CircleDot" size="12"></lucide-icon></div> 
+                <div class="circle"> <lucide-icon [img]="CircleDot" size="12" ></lucide-icon></div> 
                 <div class="onlineORoffline">{{ sensor.isOnline ? 'online' : 'offline' }}</div>
               </span>
             </div>
             
             <div class="metrics">
-              <div class="metric">
+              <div class="label-value">
                 <span class="label">Last update: </span>
-                <span>{{ sensor.lastSeenRelative }}</span>
+                <span class="metrics-value">{{ sensor.lastSeenRelative }}</span>
               </div>
-            </div>
-            
-            <div class="plant">Assigned plant: {{ sensor.plant }}</div>
+              <div class="label-value">
+                <span class="label">Assigned plant: </span>
+                <span class="metrics-value">{{ sensor.plant }}</span>
+              </div>
+            </div>            
           </div>
         }
       </div>
