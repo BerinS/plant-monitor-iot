@@ -23,7 +23,7 @@ import { LucideAngularModule, CircleDot} from 'lucide-angular';
             <div class="card-header">
               <span class="mac-address">Mac: {{ sensor.mac }}</span>
               <span class="badge" [class.red]="!sensor.isOnline" [class.green]="sensor.isOnline">
-                <div class="circle"> <lucide-icon [img]="CircleDot" size="12" ></lucide-icon></div> 
+                <div class="circle"> <lucide-icon [img]="CircleDot" size="14" ></lucide-icon></div> 
                 <div class="onlineORoffline">{{ sensor.isOnline ? 'online' : 'offline' }}</div>
               </span>
             </div>

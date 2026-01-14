@@ -60,22 +60,26 @@ export class HistoryChartComponent {
     this.rangeChange.emit(hours);
   }
 
+
   chartData = computed(() => {
     const rawData = this.historyData();
     if (!rawData || rawData.length === 0) return [];
 
-    // reverse array so chart goes old -> new and map to ngx format
-    const transformedSeries = [...rawData].reverse().map(item => ({
-      name: item.formattedTime.split(' ').pop(), // just the time 
-      value: item.value
-    }));
+    // max points on chart
+    const targetPoints = 50;
+    
+    // step calculation
+    const step = Math.ceil(rawData.length / targetPoints);
 
-    return [
-      {
-        name: 'Moisture',
-        series: transformedSeries
-      }
-    ];
+    const transformedSeries = [...rawData]
+      .filter((_, index) => index % step === 0) // dynamic step to avoid clutter
+      .reverse()
+      .map(item => ({
+        name: item.formattedTime.split(' ').pop() + ' ' + item.formattedTime.split(' ')[0]  + item.formattedTime.split(' ')[1], // time, day, month
+        value: item.value
+      }));
+
+    return [{ name: 'Moisture', series: transformedSeries }];
   });
 
   colorScheme: Color = {
