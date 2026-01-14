@@ -71,6 +71,8 @@ header {
 @media (max-width: $mobile-break) {
   header {
     padding-block: 10px;
+    box-shadow: none;
+    padding-inline-start: 5px;
   }
   .search-wrapper {
     min-width: 210px;

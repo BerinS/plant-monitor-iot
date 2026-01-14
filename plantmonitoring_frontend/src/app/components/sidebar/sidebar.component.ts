@@ -23,22 +23,22 @@ import {
       <div class="brand">PlantMonitor</div>
       
       <a routerLink="/home" routerLinkActive="active">
-        <lucide-icon [img]="DashboardIcon"></lucide-icon>
+        <lucide-icon [img]="DashboardIcon" size="21"></lucide-icon>
         <span>Dashboard</span>
       </a>
 
       <a routerLink="/plants" routerLinkActive="active">
-        <lucide-icon [img]="PlantIcon"></lucide-icon>
+        <lucide-icon [img]="PlantIcon" size="21"></lucide-icon>
         <span>My Plants</span>
       </a>
 
       <a routerLink="/sensors" routerLinkActive="active">
-        <lucide-icon [img]="SatelliteDish"></lucide-icon>
+        <lucide-icon [img]="SatelliteDish" size="21"></lucide-icon>
         <span>Sensors</span>
       </a>
 
       <a routerLink="/settings" routerLinkActive="active">
-        <lucide-icon [img]="SettingsIcon"></lucide-icon>
+        <lucide-icon [img]="SettingsIcon" size="21"></lucide-icon>
         <span>Settings</span>
       </a>
 

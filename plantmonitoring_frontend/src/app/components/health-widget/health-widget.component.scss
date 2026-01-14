@@ -1,3 +1,5 @@
+$mobile-break: 768px;
+
 :host {
   display: block;
   height: 100%;
@@ -18,14 +20,14 @@
 
 .summary-panel{
   padding: 0;
-  color: #555; 
+  color: #888; 
 }
 
 .summary-text p{
   margin: 0;
   padding-bottom: 1rem;
   font-size: small;
-  color: #999999;  
+  color: #888;  
 }
 
 .node-card{
@@ -40,6 +42,7 @@
   padding-bottom: 10px;
   margin-bottom: 10px;
   border-bottom: 1px solid #eee;
+  font-weight: 400;
 
   .icon { font-size: 1.5rem; }
   
@@ -55,10 +58,9 @@
 .node-grid {
   flex: 1; // fill remaining height
   overflow-y: auto; // scroll if needed
-  
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-  gap: 10px;
+  gap: 17px;
   padding-right: 4px;
 }
 
@@ -91,30 +93,36 @@
   gap: 5px;
   font-size: 0.8rem;
   font-weight: 600;
-
+  color: #888;
   &.red {
     .circle{
       color: var(--offline-color);
-      padding-top: 3px;
+      padding-top: 4px;
     }
   }
   
   &.green {
     .circle{
       color: var(--online-color);
-      padding-top: 3px;
+      padding-top: 4px;
     }
   }
 }
 
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
+.metrics {
+  font-size: 0.9rem;
+}
 
-  .name { font-weight: 600; color: #444; font-size: 0.9rem; }
-  .mac  { font-size: 0.7rem; color: #999; font-family: monospace; }
+.label-value{
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+.label{ 
+  font-weight: 450;
+}
+
+.metrics-value{
+  color: #888;
 }
 
 .card-bottom {
@@ -125,4 +133,10 @@
   color: #666;
   
   .time { font-style: italic; }
+}
+
+@media (max-width: $mobile-break) {
+  .node-grid{
+    gap: 17px;
+  }
 }
