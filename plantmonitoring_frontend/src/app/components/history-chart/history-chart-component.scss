@@ -7,12 +7,14 @@
 .chart-container {
   height: 100%; /* must have explicit height */
   width: 100%;
-  display: flex;       
-  min-height: 250px; /* Safety fallback */
+  display: flex;    
+  align-items: center;
+  justify-content: center;   
+  min-height: 250px; 
 }
 
 
-/* pill toggle buttons */
+// pill toggle buttons
 .controls { 
   display: flex; 
   justify-content: flex-end; 

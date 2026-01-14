@@ -4,26 +4,31 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { LucideAngularModule, Sprout } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
 import { PlantService } from '../../services/plant.service';
-import { DashboardWidget, Plant } from '../../models/dashboard.model';
+import { SensorService } from '../../services/sensor.service';
+import { DashboardWidget, Plant, SensorHealth } from '../../models/dashboard.model';
+import { HealthWidgetComponent } from '../../components/health-widget/health-widget.component';
 import { PlantCardDashComponent } from '../../components/plantCardDash/plant-card-dash.component';
 import { HistoryChartComponent } from '../../components/history-chart/history-chart.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, PlantCardDashComponent, HistoryChartComponent, LucideAngularModule, FormsModule], 
+  imports: [CommonModule, PlantCardDashComponent, HistoryChartComponent, LucideAngularModule, FormsModule, HealthWidgetComponent], 
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
+
 export class DashboardComponent {
   readonly Sprout = Sprout;
   private plantService = inject(PlantService);
+  private sensorService = inject(SensorService);
 
   // Signals
   plants = toSignal(this.plantService.getPlants(), { initialValue: [] });
   historyData = signal<any[]>([]);  
   selectedHistoryPlantId = signal<number>(0);
   selectedTimeRange = signal<number>(24);
+  sensorStatusData = signal<SensorHealth[]>([]);
 
 
   fetchHistory(plantId: number, range: number) {
@@ -35,13 +40,13 @@ export class DashboardComponent {
   // called by dropdown for selecting plant
   onHistoryPlantChanged(newId: number) {
     this.selectedHistoryPlantId.set(Number(newId));
-    // Fetch with new ID but keep existing range
+    // fetch with new id but keep existing range
     this.fetchHistory(Number(newId), this.selectedTimeRange());
   }
 
   onTimeRangeChanged(newRange: number) {
     this.selectedTimeRange.set(newRange);
-    // Fetch with existing ID but new range
+    // detch with existing id but new range
     this.fetchHistory(this.selectedHistoryPlantId(), newRange);
   }
 
@@ -56,6 +61,11 @@ export class DashboardComponent {
         this.selectedHistoryPlantId.set(firstPlant.id);
         this.fetchHistory(firstPlant.id, 24)
       }
+
+      // fetch system health
+      this.sensorService.getSensorHealth().subscribe(data => {
+        this.sensorStatusData.set(data);
+      });
     });
   }
 
@@ -68,9 +78,8 @@ export class DashboardComponent {
   allWidgets = computed(() => {
     const plantList = this.plants();
     const history = this.historyData(); 
-    
+    const healthData = this.sensorStatusData();
     const activePlants = plantList;
-    const historyData = history;
 
     const plantWidgets: DashboardWidget[] = activePlants.map(plant => ({
       id: `plant-${plant.id}`, 
@@ -120,6 +129,15 @@ export class DashboardComponent {
           title: data.length > 0 ? 'Moisture History' : 'Moisture History (No Data)'
         };
       }
+
+      if (widget.id === 'health') {
+        return { 
+          ...widget, 
+          data: healthData,
+          title: healthData.length > 0 ? 'System Health' : 'System Health (No Data)'
+        };
+      }
+    
       return widget; 
     });
 

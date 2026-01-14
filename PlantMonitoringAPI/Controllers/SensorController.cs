@@ -73,6 +73,7 @@ namespace PlantMonitoringAPI.Controllers
             return Ok(history);
         }
 
+        // get the latest sensor reading for a plant        
         [HttpGet("{plantId}/latest")]
         public async Task<IActionResult> GetLatest(int plantId) 
         { 
@@ -92,6 +93,30 @@ namespace PlantMonitoringAPI.Controllers
             }
 
             return Ok(reading);
+        }
+
+        // used for system health and determining if a sensor is offline
+        [HttpGet("health")]
+        public async Task<ActionResult<IEnumerable<DeviceHealthDto>>> GetSystemHealth()
+        {
+            var devices = await _context.Devices
+                .Select(d => new DeviceHealthDto
+                {
+                    Id = d.Id,
+                    MacAddress = d.MacAddress,
+
+                    AssignedPlant = d.Plant != null ? d.Plant.Name : "Idle",
+
+                    LastContact = d.Plant != null
+                ? d.Plant.SensorReadings
+                    .OrderByDescending(r => r.MeasuredAt)
+                    .Select(r => (DateTime?)r.MeasuredAt)
+                    .FirstOrDefault()
+                : null
+                })
+                .ToListAsync();
+
+            return Ok(devices);
         }
 
         [HttpDelete("{id}")]
