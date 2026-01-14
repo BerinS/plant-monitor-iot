@@ -2,6 +2,7 @@ import { Component, input, computed, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule, Color, ScaleType } from '@swimlane/ngx-charts'; 
 import { Plant } from '../../models/dashboard.model';
+import { curveNatural, curveMonotoneX } from 'd3-shape'; // used for line chart curve interpolation
 
 @Component({
   selector: 'app-history-chart',
@@ -25,6 +26,7 @@ import { Plant } from '../../models/dashboard.model';
         @if (historyData().length > 0) {
            <ngx-charts-area-chart
              [results]="chartData()"
+             [curve]="curveMonotoneX"
              [gradient]="true"
              [scheme]="colorScheme"
              [xAxis]="true"
@@ -40,6 +42,9 @@ import { Plant } from '../../models/dashboard.model';
   styleUrls: ['./history-chart-component.scss']
 })
 export class HistoryChartComponent {
+  readonly curveNatural = curveNatural;
+  readonly curveMonotoneX = curveMonotoneX;
+
   // raw list from API
   historyData = input.required<any[]>(); 
   selectedRange = input<number>(24);
