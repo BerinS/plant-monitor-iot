@@ -1,2 +1,8 @@
 Bruno -  REST API testing/
 ESP32 Code/
+
+.env
+
+# Ignore database data
+postgres-data/
+
