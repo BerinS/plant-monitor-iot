@@ -6,3 +6,4 @@ ESP32 Code/
 # Ignore database data
 postgres-data/
 
+init.sql
