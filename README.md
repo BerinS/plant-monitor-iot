@@ -1,5 +1,7 @@
 # Plant Monitor IoT - Soil Moisture Tracking System
 
+![REST API](https://img.shields.io/badge/REST_API-FF6C37?style=flat&logo=json&logoColor=white)  [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff)](#) [![Angular](https://img.shields.io/badge/Angular-%23DD0031.svg?logo=angular&logoColor=white)](#) [![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](#)
+
 A full-stack IoT solution designed to monitor the soil moisture levels of household plants. The system collects real-time data from sensors, processes it through a ASP .NET Core backend, and shows it on an Angular frontend, ensuring no plant is ever over-watered or neglected.
 
 ## Overview
@@ -15,12 +17,12 @@ Architecture: Microservices - Frontend, Backend, Database - orchestrated via Doc
 - **Device Health Checks**: Monitors sensor connectivity and status
 - **Historical Logging**: Persists sensor readings in PostgreSQL
 
-###Dashboard & UI
+### Dashboard & UI
 - **Real-Time Visualization**: Dynamic charts displaying moisture trends over time
 - **Plant Management**: CRUD interface for managing plant profiles (Name, Description, Group)
 - **Responsive Design**: Optimized for viewing on desktop or mobile
 
-###Infrastructure
+### Infrastructure
 - **Containerized Deployment**: Isolated services using Docker
 - **Reverse Proxy**: Nginx routing for API and frontend integration
 
