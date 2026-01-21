@@ -7,3 +7,7 @@ ESP32 Code/
 postgres-data/
 
 init.sql
+
+*.psd
+
+Images/OG Images/

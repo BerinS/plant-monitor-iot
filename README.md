@@ -4,6 +4,8 @@
 
 A full-stack IoT solution designed to monitor the soil moisture levels of household plants. The system collects real-time data from sensors, processes it through a ASP .NET Core backend, and shows it on an Angular frontend, ensuring no plant is ever over-watered or neglected.
 
+![Plant Monitoring System](./Images/Header%20image.jpg)
+
 ## Overview
 
 This application serves as the center for a network of soil moisture sensors. The system is deployed on a local Proxmox home server via Docker, and is designed to handle data streams from multiple ESP32 devices. It features historical data graphing, device management, and a PostgreSQL database.
@@ -26,6 +28,13 @@ Architecture: Microservices - Frontend, Backend, Database - orchestrated via Doc
 - **Containerized Deployment**: Isolated services using Docker
 - **Reverse Proxy**: Nginx routing for API and frontend integration
 
+### Custom 3D printed case
+- ***Custom CAD Design***: specifically made to compactly house the LM393 and ESP-32
+- **Magnetic Mounting** convenient magnetic attachment to the clip for easy mounting on vases
+- **Print-Ready** design requires minimal supports for easy 3D printing
+
+![Plant Monitoring System](./Images/Case/Case%20collage.jpg)
+
 ## Technologies used
 
 **Frontend:** Angular <br>
@@ -38,7 +47,7 @@ Architecture: Microservices - Frontend, Backend, Database - orchestrated via Doc
 [![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](#)
 
 
-**DevOps & Infrastructure:** Docker, Portainer  <br>
+**DevOps & Infrastructure:** Docker, Portainer, ProxMox  <br>
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
 [![Portainer](https://img.shields.io/badge/Portainer-C080FF?logo=Portainer&logoColor=fff)](#)
 
