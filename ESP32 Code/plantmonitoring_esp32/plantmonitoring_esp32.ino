@@ -8,7 +8,7 @@
 const char* ssid = "";
 const char* password = "***REMOVED***";
 
-const char* serverUrl = "http://192.168.1.13:5000/api/sensor";
+const char* serverUrl = "http://192.168.1.46:80/api/sensor";
 const char* apiToken  = "55555555-aaaa-bbbb-cccc-1234567890ab";
 
 // Calibration Values

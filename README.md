@@ -96,3 +96,7 @@ Structure ensures separation of concerns. The docker-compose.yml links the indep
 
 ## Notes
 Status: The project is live on the local server. Setup requires Docker and Docker Compose installed on the host machine. init.sql automatically populates the database on the first run.
+
+## Dashboard UI
+![Dashboard UI](./Images/Dashboard1.jpg)
+
