@@ -20,14 +20,14 @@ import {
   styleUrl: './sidebar.component.scss', 
   template: `
     <nav>
-      <div class="brand">PlantMonitor</div>
+      <div class="brand">Plant Monitor</div>
       
-      <a routerLink="/home" routerLinkActive="active">
+      <a routerLink="/dashboard" routerLinkActive="active">
         <lucide-icon [img]="DashboardIcon" size="21"></lucide-icon>
         <span>Dashboard</span>
       </a>
 
-      <a routerLink="/plants" routerLinkActive="active">
+      <a routerLink="/my-plants" routerLinkActive="active">
         <lucide-icon [img]="PlantIcon" size="21"></lucide-icon>
         <span>My Plants</span>
       </a>

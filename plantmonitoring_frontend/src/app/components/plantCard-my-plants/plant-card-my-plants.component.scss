@@ -1,0 +1,152 @@
+$mobile-break: 768px;
+
+:host {
+  display: block;      
+  height: 100%;       
+  width: 100%;          
+}
+
+.plant-card { 
+  height: 100%; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.wrapper {
+  display: flex; 
+  justify-content: space-between; 
+  padding-top: 15px;
+  height: 100%;
+}
+
+@media (max-width: $mobile-break) {
+  .wrapper {
+    flex-direction: column;    
+  }
+  .item1 {
+    order: 1;
+  }
+  .item2 {
+    order: 2;
+    margin-top: 24px;
+    margin-bottom: 0;
+  }
+}
+
+
+.corner-icon {  
+  color: #888;
+}
+
+.pen, .trash {
+  margin-left: 10px;
+  transition: 0.1s ease-in-out;
+} 
+
+.trash:hover {
+  cursor: pointer;
+  color: #b83f3d;
+}
+
+.pen:hover {
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.stats{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 45px;
+  padding-right: 3rem;
+
+  @media (max-width: $mobile-break) {
+    margin-bottom: 10px;
+    padding-right: 0;
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.stats:hover{
+  cursor: default;  
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.footer {   
+  font-size: 0.9rem; 
+  color: #888; 
+  letter-spacing: 0.5px; 
+  padding-top: 15px;
+}
+
+.plant-info{
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.description { 
+  font-size: 1rem; 
+  color: #555; 
+}
+
+
+h3 { 
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 1.3rem; 
+  color: #494949; 
+  font-weight: 550;
+}
+
+
+.moisture-badge {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 35px;
+  background: #e6f4ea; color: #1e8e3e; 
+  font-weight: bold;
+  box-shadow: 0 0 20px 0px rgba(2, 158, 23, 0.432);
+
+  @media (max-width: $mobile-break) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  @keyframes breathe-red {
+    0% {
+      box-shadow: 0 0 4px 0px rgba(255, 51, 51, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 16px 3px rgba(255, 51, 51, 0.6);
+    }
+    100% {
+      box-shadow: 0 0 4px 0px rgba(255, 51, 51, 0.3);
+  }
+
+  
+}
+
+&.low {
+  background: #fce8e6; 
+  color: #ca1b18; 
+  
+  animation: breathe-red 2s ease-in-out infinite;
+}
+}
+
+.moisture-num {
+  font-size: 2.6rem; 
+  font-weight: lighter;
+
+  @media (max-width: $mobile-break) {
+    font-size: 2.1rem;
+  }
+}
