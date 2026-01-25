@@ -11,7 +11,7 @@ $mobile-break: 768px;
 .brand {
   padding: 20px;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: var(--text-color-light);
   font-weight: 800;
   padding-bottom: 3rem;
@@ -22,21 +22,24 @@ a {
   display: flex;       
   align-items: center; 
   gap: 12px;          
-  padding: 15px 20px;
+  padding: 12px 16px;
   text-decoration: none;
   color: var(--text-color-light);
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: background 0.1s ease;
+  margin: 10px;
+  border-radius: 13px;
 
   &:hover { 
-    background: var(--primary-color-light); 
+    background: var(--primary-color-light);     
   }
   
   &.active {
-    background: #ffff;
+    background: var(--primary-color-light);
     color: var(--primary-color);
-    border-right: 3px solid var(--primary-color);
+    // border-right: 3px solid var(--primary-color);
     font-weight: 600;
+    color: white;
   }
 
   lucide-icon {
