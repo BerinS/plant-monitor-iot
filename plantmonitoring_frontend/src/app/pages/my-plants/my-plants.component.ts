@@ -1,28 +1,20 @@
-import { Component, effect } from '@angular/core';
-import { inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { LucideAngularModule, Sprout } from 'lucide-angular';
 
 import { PlantCardMyPlants } from '../../components/plantCard-my-plants/plant-card-my-plants.component'
 import { PlantService } from '../../services/plant.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-
 
 @Component({
   selector: 'app-my-plants',
-  imports: [PlantCardMyPlants],
+  imports: [PlantCardMyPlants, LucideAngularModule],
   templateUrl: './my-plants.component.html',
   styleUrl: './my-plants.component.scss',
 })
 export class MyPlantsComponent {
+  readonly Sprout = Sprout;
   private plantService = inject(PlantService);
 
-  // plant signal
   plants = toSignal(this.plantService.getPlants(), { initialValue: [] });
 
-  constructor() {
-    effect(() => {
-      const plantsList = this.plants();
-      
-    }, { allowSignalWrites: true });
-  }
 }

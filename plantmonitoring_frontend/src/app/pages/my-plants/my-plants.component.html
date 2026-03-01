@@ -1,9 +1,14 @@
-<div class="my-plants-grid">
-  <div class="widget-card" [style.--col-span]="12" [style.--row-span]="1">
-      <app-plant-card-my-plants></app-plant-card-my-plants>
-  </div>
-  <div class="widget-card" [style.--col-span]="12" [style.--row-span]="1">
-      <app-plant-card-my-plants></app-plant-card-my-plants>
-  </div>
+<div class="my-plants-grid">  
+      @for (p of plants(); track p.id) {
+        <div class="widget-card" [style.--col-span]="12" [style.--row-span]="1">
+            <app-plant-card-my-plants [plant]="p"></app-plant-card-my-plants>
+        </div>
+    } 
+    @empty {      
+      <div class="noplants" [style.--col-span]="12" [style.--row-span]="1">            
+          <lucide-icon [img]="Sprout" size="30"></lucide-icon>
+          No plants to show            
+      </div>     
+    }  
 </div>
 
