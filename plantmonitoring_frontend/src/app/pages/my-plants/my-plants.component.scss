@@ -1,6 +1,6 @@
 .my-plants-grid {
   display: grid;
-  gap: 1.4rem; 
+  gap: 1rem; 
   grid-template-columns: 1fr;   
 }
 
@@ -15,3 +15,22 @@
   grid-row: auto; 
   min-height: 220px; 
 }
+
+.noplants {
+  // 1 column on mobile
+  grid-column: 1 / -1; 
+  flex-direction: column;
+  background: rgba(177, 177, 177, 0.144); 
+  display: flex;
+  align-items: center;  
+  justify-content: center;
+  color: #818181;
+  border-radius: 12px;
+  border: 1px dashed #c0c0c0b4;
+  min-height: 150px; 
+
+  @media (min-width: 768px) {
+    grid-column: span var(--col-span, 1); 
+  }
+}
+

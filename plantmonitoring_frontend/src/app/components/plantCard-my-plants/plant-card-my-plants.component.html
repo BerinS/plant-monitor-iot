@@ -1,0 +1,33 @@
+<div class="plant-card">
+  <div class="header">        
+    <div>
+      <h3>{{ plant().name }}</h3> 
+    </div>
+    <div class="corner-icon">      
+      <span class="pen"><lucide-icon [img]="PenIcon" size="20"></lucide-icon></span>  
+      <span class="trash"><lucide-icon [img]="TrashIcon" size="20"></lucide-icon></span>
+    </div>        
+  </div>   
+  
+  <div class="wrapper">    
+    <div class="item1">          
+      <div class="description">
+        <p>{{ plant().description }}</p> 
+      </div>   
+      <div class="footer">
+        <div class="plant-info"><b>GROUP:</b> {{ plant().groupName }}</div>
+        
+        <div class="plant-info"><b>CREATED AT:</b> {{ plant().createdAt | date:'HH:mm | dd/MM/yyyy' }}</div>        
+      </div>
+    </div>
+
+    <div class="item2 stats">
+      <div class="moisture-circle" [style.--moisture]="plant().currentMoisture" [class.low]="isLow()">
+        <div class="moisture-inner">
+          <lucide-icon [img]="DropIcon" size="23"></lucide-icon>
+          <span class="moisture-num">{{ plant().currentMoisture }}%</span>
+        </div>
+      </div>        
+    </div>
+  </div>
+</div>
