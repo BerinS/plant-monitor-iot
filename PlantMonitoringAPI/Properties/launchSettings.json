@@ -23,7 +23,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false, 
-      "applicationUrl": "http://0.0.0.0:5000", // listen on ALL interfaces
+      "applicationUrl": "http://0.0.0.0:5000", // listen on all interfaces
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
