@@ -75,11 +75,16 @@ h3 {
 }
 
 &.low {
-  background: #fce8e6; 
-  color: #ca1b18; 
+    background: #fce8e6; 
+    color: #ca1b18; 
+    
+    animation: breathe-red 2s ease-in-out infinite;
+  }
   
-  animation: breathe-red 2s ease-in-out infinite;
-}
+&.noMoistureValue {
+    background: #f0f0f0; 
+    color: #888; 
+  }
 }
 
 .moisture-num {

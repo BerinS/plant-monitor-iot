@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
       
     <div class="wrapper">
       <div class="stats">
-        <div class="moisture-badge" [class.low]="isLow()">
+        <div class="moisture-badge" [class.low]="isLow()" [class.noMoistureValue]="noMoistureValue()">
           <lucide-icon [img]="DropIcon" size="30"></lucide-icon>
           <span class="moisture-num">{{ plant().currentMoisture }}%</span>
         </div>        
@@ -43,5 +43,6 @@ export class PlantCardDashComponent {
   readonly DropIcon = Droplets;
   readonly InfoIcon = Info;
 
-  isLow = computed(() => this.plant().currentMoisture < 30);
+  isLow = computed(() => this.plant().currentMoisture < 30 && this.plant().currentMoisture !== null);
+  noMoistureValue = computed(() => this.plant().currentMoisture === null);
 }

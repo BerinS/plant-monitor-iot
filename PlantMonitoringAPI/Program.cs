@@ -3,6 +3,7 @@ using PlantMonitoringAPI.Data;
 using PlantMonitoringAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -20,13 +21,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp",
         policy =>
         {
-            policy.AllowAnyOrigin()                     //WithOrigins("http://localhost:4200") <- to allow specific origin
-                  .AllowAnyMethod()                     // Allow GET, POST, PUT, DELETE
+            policy.AllowAnyOrigin()                     //WithOrigins("http://localhost:4200") to allow specific origin
+                  .AllowAnyMethod()                     
                   .AllowAnyHeader();                    
         });
 });
 
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {

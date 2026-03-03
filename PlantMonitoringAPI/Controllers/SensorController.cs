@@ -34,12 +34,12 @@ namespace PlantMonitoringAPI.Controllers
                 return BadRequest(new { message = "Device is not assigned to any plant" });
             }
 
-            //  mapping the DTO to model
+            //  mapping DTO to model
             var dataPoint = new SensorData
             {
                 PlantId = device.CurrentPlantId.Value, 
                 MoistureValue = request.Value,
-                MeasuredAt = DateTime.UtcNow // server time
+                MeasuredAt = DateTime.UtcNow 
             };
 
             _context.SensorData.Add(dataPoint);

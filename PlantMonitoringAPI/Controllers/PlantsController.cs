@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PlantMonitoringAPI.Data;
 using PlantMonitoringAPI.DTOs;
+using PlantMonitoringAPI.Models;
 
 namespace PlantMonitoringAPI.Controllers
 {
@@ -74,9 +75,74 @@ namespace PlantMonitoringAPI.Controllers
                                   .Select(r => (DateTime?)r.MeasuredAt)
                                   .FirstOrDefault()
                 })
-                .ToListAsync(); 
+                .ToListAsync();
 
             return Ok(plants);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostPlant([FromBody] CreatePlantDto request) 
+        {
+            // group check
+            var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId);
+            if (!groupExists)
+            {
+                return BadRequest(new { message = $"Group ID {request.GroupId} does not exist" });
+            }
+
+            var plant = new Plant
+            {
+                Name = request.Name,
+                Description = request.Description,
+                GroupId = request.GroupId,
+                CreatedAt = DateTime.UtcNow 
+            };
+
+            _context.Plants.Add(plant);
+            await _context.SaveChangesAsync();
+
+            // output response DTO
+
+            var group = await _context.Groups.FindAsync(plant.GroupId);
+
+            var responseDto = new PlantDto
+            {
+                Id = plant.Id,
+                Name = plant.Name,
+                Description = plant.Description,
+                CreatedAt = plant.CreatedAt,
+                GroupName = group?.Name ?? "No Group"
+            };
+
+            return CreatedAtAction(nameof(GetPlant), new { id = plant.Id }, responseDto);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPlant(int id, [FromBody] UpdatePlantDto request)
+        {
+            if (id != request.Id)
+            {
+                return BadRequest("Mismatch in URL and body");
+            }
+
+            var plant = await _context.Plants.FindAsync(id);
+            if (plant == null) {
+                return NotFound($"Plant with ID {id} not found");
+            }
+
+            var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId);
+            if (!groupExists)
+            {
+                return BadRequest("Group does not exist");
+            }
+
+            plant.Name = request.Name;
+            plant.Description = request.Description;
+            plant.GroupId = request.GroupId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
