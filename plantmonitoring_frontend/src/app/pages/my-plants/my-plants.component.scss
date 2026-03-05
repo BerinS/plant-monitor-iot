@@ -34,3 +34,50 @@
   }
 }
 
+.toolbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+button {
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  padding: 0.6em 1.2em 0.6em 1em;
+  transition: all ease-in-out 0.1s;
+  font-size: 17px;
+  color: #fff;  
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+}
+
+button span {
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  font-weight: 500;
+  gap: 4px;
+}
+
+button.add{
+  background-color: var(--primary-color);
+}
+
+button.add:hover {
+  background-color: var(--primary-color-light);
+}
+
+button.sort{
+  background-color: rgb(255, 255, 255);
+  color: #818181;
+}
+
+button.sort:hover {
+  background-color: rgb(250, 250, 250);
+}
+
+button.sort .icon{
+  fill: #818181;
+}
+
