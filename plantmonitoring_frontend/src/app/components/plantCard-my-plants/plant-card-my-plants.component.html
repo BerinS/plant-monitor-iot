@@ -4,9 +4,13 @@
       <h3>{{ plant().name }}</h3> 
     </div>
     <div class="corner-icon">      
-      <span class="pen"><lucide-icon [img]="PenIcon" size="20"></lucide-icon></span>  
-      <span class="trash"><lucide-icon [img]="TrashIcon" size="20"></lucide-icon></span>
-    </div>        
+      <span class="pen" (click)="onEdit()">
+        <lucide-icon [img]="PenIcon" size="20"></lucide-icon>
+      </span>  
+      <span class="trash" (click)="onDelete()">
+        <lucide-icon [img]="TrashIcon" size="20"></lucide-icon>
+      </span>
+    </div>      
   </div>   
   
   <div class="wrapper">    
@@ -26,7 +30,7 @@
         [type]="'arch'" 
         [value]="plant().currentMoisture" 
         [thick]="9" 
-        [size]="130"
+        [size]="140"
         [foregroundColor]="isLow() ? '#ca1b18' : '#1e8e3e'"
         [cap]="'butt'"
         [duration]="600" >

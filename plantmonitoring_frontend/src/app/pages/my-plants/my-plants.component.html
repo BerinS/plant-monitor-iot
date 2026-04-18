@@ -1,16 +1,37 @@
 <div class="toolbar">
-    </div>
+</div>
 
 <div class="my-plants-grid">  
-    @for (p of plants(); track p.id) {
-        <div class="widget-card">
-            <app-plant-card-my-plants [plant]="p"></app-plant-card-my-plants>
-        </div>
-    } 
-    @empty {      
-        <div class="noplants">            
-            <lucide-icon [img]="Sprout" size="30"></lucide-icon>
-            No plants to show            
-        </div>     
-    }  
+  @for (p of plants(); track p.id) {
+    <div class="widget-card">
+      <app-plant-card-my-plants 
+        [plant]="p" 
+        (editRequest)="handleEdit($event)"
+        (deleteRequest)="handleDelete($event)">
+      </app-plant-card-my-plants>
+    </div>
+  } 
 </div>
+
+<app-modal 
+  [type]="modalType()" 
+  [isOpen]="isModalOpen()" 
+  [title]="modalMode() === 'edit' ? 'Edit Plant' : 'Delete Plant'"
+  (closed)="closeModal()">
+  
+  @if (activePlant(); as plant) {
+    @switch (modalMode()) {
+      @case ('edit') {
+        <form (submit)="saveChanges(); $event.preventDefault()">
+          <label>Name</label>
+          <input [(ngModel)]="plant.name" name="name">
+          <button type="submit">Update</button>
+        </form>
+      }
+      @case ('delete') {
+        <p>Are you sure you want to delete {{ plant.name }}?</p>
+        <button (click)="confirmDelete()">Yes, Delete</button>
+      }
+    }
+  }
+</app-modal>

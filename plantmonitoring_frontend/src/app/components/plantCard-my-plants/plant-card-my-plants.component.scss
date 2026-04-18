@@ -138,8 +138,6 @@ h3 {
     stroke-linecap: round;
     transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     
-    // This is the secret to smoothness: a very subtle drop shadow
-    // hides the "stair-step" anti-aliasing on the edge of the stroke
     filter: drop-shadow(0 0 1px rgba(0,0,0,0.1));
   }
 }
