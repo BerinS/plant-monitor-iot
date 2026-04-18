@@ -144,5 +144,22 @@ namespace PlantMonitoringAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePlant(int id)
+        {
+            var plant = await _context.Plants.FindAsync(id);
+
+            if (plant == null)
+            {
+                return NotFound(new { message = $"Plant with ID {id} not found" });
+            }
+
+            _context.Plants.Remove(plant);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

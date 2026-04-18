@@ -1,23 +1,26 @@
 .my-plants-grid {
   display: grid;
-  gap: 1rem; 
-  grid-template-columns: 1fr;   
+  gap: 1rem;
+  /* default 1 column for mobile */
+  grid-template-columns: 1fr; 
+ 
+  /* 2 columns for tablets and above */
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .widget-card {
   background: var(--bg-color-light);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.2rem;
   box-shadow: rgba(17, 17, 26, 0.027) 0px 1px 0px, rgba(17, 17, 26, 0.055) 0px 0px 5px;
   display: flex;
   flex-direction: column; 
-  grid-column: span 1;
-  grid-row: auto; 
   min-height: 220px; 
 }
 
 .noplants {
-  // 1 column on mobile
   grid-column: 1 / -1; 
   flex-direction: column;
   background: rgba(177, 177, 177, 0.144); 
@@ -28,10 +31,6 @@
   border-radius: 12px;
   border: 1px dashed #c0c0c0b4;
   min-height: 150px; 
-
-  @media (min-width: 768px) {
-    grid-column: span var(--col-span, 1); 
-  }
 }
 
 .toolbar{

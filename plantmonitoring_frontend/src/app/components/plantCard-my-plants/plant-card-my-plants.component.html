@@ -21,13 +21,19 @@
       </div>
     </div>
 
-    <div class="item2 stats">
-      <div class="moisture-circle" [style.--moisture]="plant().currentMoisture" [class.low]="isLow()">
-        <div class="moisture-inner">
-          <lucide-icon [img]="DropIcon" size="23"></lucide-icon>
-          <span class="moisture-num">{{ plant().currentMoisture }}%</span>
-        </div>
-      </div>        
+   <div class="item2 stats">
+      <ngx-gauge 
+        [type]="'arch'" 
+        [value]="plant().currentMoisture" 
+        [thick]="9" 
+        [size]="130"
+        [foregroundColor]="isLow() ? '#ca1b18' : '#1e8e3e'"
+        [cap]="'butt'"
+        [duration]="600" >
+       
+      </ngx-gauge>
     </div>
+      
+    
   </div>
 </div>

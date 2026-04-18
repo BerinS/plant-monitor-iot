@@ -34,6 +34,7 @@
     "@swimlane/ngx-charts": "^23.1.0",
     "d3-shape": "^3.2.0",
     "lucide-angular": "^0.562.0",
+    "ngx-gauge": "^13.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

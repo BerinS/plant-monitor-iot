@@ -3,7 +3,7 @@ $mobile-break: 768px;
 :host {
   display: block;      
   height: 100%;       
-  width: 100%;          
+  width: 100%;     
 }
 
 .plant-card { 
@@ -11,7 +11,6 @@ $mobile-break: 768px;
   display: flex; 
   flex-direction: column; 
 }
-
 
 .wrapper {
   display: flex; 
@@ -106,56 +105,50 @@ h3 {
 }
 
 
-.moisture-circle {
-  --moisture: 0; 
-  --fill-color: #1e8e3e; 
-  --track-color: #e0e0e0; // track
-
+.moisture-container {
+  --fill-color: #1e8e3e;
+  --track-color: #e0e0e0;
+  position: relative;
   width: 120px;
   height: 120px;
-  border-radius: 50%;
-  background: conic-gradient(var(--fill-color) calc(var(--moisture) * 1%), var(--track-color) 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-
-  @media (max-width: $mobile-break) {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto; 
-  }
-
+  
   &.low {
-    --fill-color: #ca1b18; 
-    --track-color: #fce8e6; 
+    --fill-color: #ca1b18;
+    --track-color: #fce8e6;
+  }
+}
+
+.progress-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible; // Important for shadow
+
+  circle {
+    fill: none;
+    stroke-width: 15; // Thicker stroke = smoother curves
+  }
+
+  &__track {
+    stroke: var(--track-color);
+  }
+
+  &__fill {
+    stroke: var(--fill-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     
-    .moisture-inner {
-      color: #ca1b18;
-    }
+    // This is the secret to smoothness: a very subtle drop shadow
+    // hides the "stair-step" anti-aliasing on the edge of the stroke
+    filter: drop-shadow(0 0 1px rgba(0,0,0,0.1));
   }
 }
 
-.moisture-inner {
-  width: 90%;
-  height: 90%;
-  border-radius: 50%;
-  background-color: #ffffff; 
+
+.stats {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: var(--fill-color);
+  justify-content: center; 
+  
 }
 
-.moisture-num {
-  font-size: 1.8rem; 
-  font-weight: 600;
-  color: var(--text-color);
-  line-height: 1;
-
-  @media (max-width: $mobile-break) {
-    font-size: 1.5rem;
-  }
-}
