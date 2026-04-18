@@ -19,4 +19,10 @@ export class PlantService {
      console.log("Fetching plant history:", url);   
     return this.http.get<any[]>(url);
   }
+
+  deletePlant(plantId: number) {
+    const url = `${this.apiUrl}/api/plants/${plantId}`;
+    console.log("Deleting plant with ID:", plantId, "URL:", url);
+    return this.http.delete(url);
+  }
 }

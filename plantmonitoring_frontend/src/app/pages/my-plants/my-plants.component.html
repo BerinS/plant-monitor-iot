@@ -29,8 +29,14 @@
         </form>
       }
       @case ('delete') {
-        <p>Are you sure you want to delete {{ plant.name }}?</p>
-        <button (click)="confirmDelete()">Yes, Delete</button>
+        <div class="delete-content">
+          <p>Are you sure you want to delete <strong>{{ plant.name }}</strong>?</p>
+          
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn-danger" (click)="confirmDelete()">Delete</button>
+          </div>
+        </div>
       }
     }
   }

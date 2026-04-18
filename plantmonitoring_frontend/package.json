@@ -35,6 +35,7 @@
     "d3-shape": "^3.2.0",
     "lucide-angular": "^0.562.0",
     "ngx-gauge": "^13.1.0",
+    "ngx-toastr": "^20.0.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
