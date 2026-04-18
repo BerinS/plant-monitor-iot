@@ -6,7 +6,8 @@ import {
   Leaf, 
   Settings, 
   X,
-  SatelliteDish
+  SatelliteDish,
+  Group
 } from 'lucide-angular';
 
 @Component({
@@ -37,6 +38,11 @@ import {
         <span>Sensors</span>
       </a>
 
+      <a routerLink="/groups" routerLinkActive="active">
+        <lucide-icon [img]="GroupsIcon" size="21"></lucide-icon>
+        <span>Groups</span>
+      </a>
+
       <a routerLink="/settings" routerLinkActive="active">
         <lucide-icon [img]="SettingsIcon" size="21"></lucide-icon>
         <span>Settings</span>
@@ -56,4 +62,6 @@ export class SidebarComponent {
   readonly SettingsIcon = Settings;
   readonly CloseIcon = X;
   readonly SatelliteDish = SatelliteDish;
+  readonly GroupsIcon = Group;
+  
 }

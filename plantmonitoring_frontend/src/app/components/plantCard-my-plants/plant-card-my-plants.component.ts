@@ -2,10 +2,11 @@ import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { LucideAngularModule, Droplets, Pen, Trash2 } from 'lucide-angular';
 import { Plant } from '../../models/my-plants.model'; 
+import { NgxGaugeModule } from 'ngx-gauge';
 
 @Component({
   selector: 'app-plant-card-my-plants',
-  imports: [LucideAngularModule, CommonModule], 
+  imports: [LucideAngularModule, CommonModule, NgxGaugeModule], 
   templateUrl: './plant-card-my-plants.component.html', 
   styleUrl: './plant-card-my-plants.component.scss',
 })
