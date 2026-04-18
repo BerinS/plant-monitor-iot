@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LucideAngularModule, Sprout } from 'lucide-angular';
+import { ToastrService } from 'ngx-toastr';
 
 import { ModalComponent } from '../../components/modal/modal.component';
 import { PlantCardMyPlants } from '../../components/plantCard-my-plants/plant-card-my-plants.component'
@@ -22,7 +23,15 @@ export class MyPlantsComponent {
   activePlant = signal<Plant | null>(null);
   modalType = signal<'default' | 'danger' | 'info'>('default');
   modalMode = signal<'edit' | 'delete' | 'default'>('default');
-  plants = toSignal(this.plantService.getPlants(), { initialValue: [] });
+  plants = signal<Plant[]>([]);
+
+  private toastr = inject(ToastrService);
+
+  constructor() {
+    this.plantService.getPlants().subscribe(data => {
+      this.plants.set(data);
+    });
+  }
 
   handleEdit(plant: Plant) {
     this.activePlant.set({ ...plant });
@@ -55,10 +64,29 @@ export class MyPlantsComponent {
 
   confirmDelete() {
     const plantToDelete = this.activePlant();
-    if (plantToDelete) {
-      // api call
+    
+    if (plantToDelete && plantToDelete.id) {      
+      this.plantService.deletePlant(plantToDelete.id).subscribe({
+        next: (response) => {
+          console.log('Plant successfully deleted');          
+          this.closeModal(); 
+
+          this.toastr.success(
+            `Plant ${plantToDelete.name} deleted successfully.`, 
+            'Success'
+          );
+          
+          this.plants.update(currentPlants => 
+            currentPlants.filter(p => p.id !== plantToDelete.id)
+          );
+        },
+        error: (err) => {
+          console.error('Failed to delete plant. Server said:', err);
+
+          this.toastr.error('Could not delete the plant. Please try again.', 'Error!');
+        }
+      });
     }
-    this.closeModal(); 
   }
 
   
