@@ -1,0 +1,71 @@
+dialog {
+  // --- animation Setup ---
+  transition: opacity 0.2s ease, transform 0.2s ease, overlay 0.2s allow-discrete;
+  opacity: 0;
+  transform: translateY(30px);
+
+  &[open] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      transition: background 0.2s ease, backdrop-filter 0.2s ease;
+    }
+  }
+
+  @starting-style {
+    &[open] {
+      opacity: 0;
+      transform: translateY(30px);
+      
+      &::backdrop {
+        background: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0px);
+      }
+    }
+  }
+
+  &.closing {
+    opacity: 0;
+    transform: translateY(30px);
+    
+    &::backdrop {
+      opacity: 0;
+    }
+  }  
+
+  border: none;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+
+  &.default {    
+    
+  }
+
+  &.danger {    
+        
+  }
+  
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  h2 { margin: 0; font-size: 1.25rem; }
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+

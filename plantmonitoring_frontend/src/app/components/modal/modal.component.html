@@ -1,0 +1,10 @@
+<dialog #dialogElement [class]="type()" (cancel)="onClose($event)">
+  <div class="modal-header">
+    <h2>{{ title() }}</h2>
+    <button class="close-btn" (click)="onClose()">&times;</button>
+  </div>
+  
+  <div class="modal-body">
+    <ng-content></ng-content>
+  </div>
+</dialog>
