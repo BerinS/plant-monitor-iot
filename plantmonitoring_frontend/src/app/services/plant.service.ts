@@ -31,4 +31,9 @@ export class PlantService {
     console.log("Updating plant with ID:", plantId, "URL:", url);
     return this.http.put(url, updatedData); 
   }
+
+  addPlant(payload: any) {
+    const url = `${this.apiUrl}/api/plants`;
+    return this.http.post<Plant>(url, payload);
+  }
 }

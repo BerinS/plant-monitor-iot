@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sprout } from 'lucide-angular';
+import { LucideAngularModule, Sprout, Plus } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
 
 import { ModalComponent } from '../../components/modal/modal.component';
@@ -18,6 +18,7 @@ import { Plant } from '../../models/plant.model';
 })
 export class MyPlantsComponent {
   readonly Sprout = Sprout;
+  readonly Plus = Plus;
   private plantService = inject(PlantService);
   private groupService = inject(GroupService);
   private toastr = inject(ToastrService);
@@ -25,7 +26,7 @@ export class MyPlantsComponent {
   isModalOpen = signal(false);
   activePlant = signal<Plant | null>(null);
   modalType = signal<'default' | 'danger' | 'info'>('default');
-  modalMode = signal<'edit' | 'delete' | 'default'>('default');
+  modalMode = signal<'edit' | 'delete' | 'add' | 'default'>('default');
   plants = signal<Plant[]>([]); 
   groups = toSignal(this.groupService.getGroups(), { initialValue: [] });
 
@@ -39,6 +40,24 @@ export class MyPlantsComponent {
     this.activePlant.set({ ...plant });
     this.modalType.set('info'); // visual style
     this.modalMode.set('edit'); // logic mode
+    this.isModalOpen.set(true);
+  }
+
+  handleAdd() {
+    // dummy plant to populate form
+    this.activePlant.set({
+      id: 0, 
+      name: '',
+      description: '',
+      createdAt: new Date().toISOString(),
+      groupName: 'General',
+      currentMoisture: 0,
+      sensorName: 'No Sensor Assigned',
+      lastUpdate: ''
+    } as Plant);
+    
+    this.modalType.set('default'); 
+    this.modalMode.set('add'); 
     this.isModalOpen.set(true);
   }
 
@@ -61,13 +80,10 @@ export class MyPlantsComponent {
     
     if (updatedPlant && updatedPlant.id) {
       
-      // 1. Find the ID of the selected group by matching the name
       const selectedGroup = this.groups().find(g => g.name === updatedPlant.groupName);
       
-      // If "No Group" is selected, you might send null or 0 depending on your DB setup
       const groupIdToSave = selectedGroup ? selectedGroup.id : null; 
 
-      // 2. Build the EXACT payload the backend expects
       const payload = {
         id: updatedPlant.id,
         name: updatedPlant.name,
@@ -123,6 +139,38 @@ export class MyPlantsComponent {
           console.error('Failed to delete plant. Error:', err);
 
           this.toastr.error('Could not delete the plant.', 'Error');
+        }
+      });
+    }
+  }
+
+  createNewPlant() {
+    const newPlant = this.activePlant();
+    
+    if (newPlant) {
+      // Find the group ID just like we did for edit
+      const selectedGroup = this.groups().find(g => g.name === newPlant.groupName);
+      const groupIdToSave = selectedGroup ? selectedGroup.id : null; 
+
+      // Build the POST payload (Notice we don't send an ID, the DB creates it)
+      const payload = {
+        name: newPlant.name,
+        description: newPlant.description,
+        groupId: groupIdToSave
+      };
+
+      this.plantService.addPlant(payload).subscribe({
+        next: (createdPlantFromDb) => {
+          this.closeModal();
+          this.toastr.success(`${newPlant.name} has been added!`, 'Success');
+
+          // Add the newly created plant (which now has a real DB ID) to the grid
+          this.plants.update(currentPlants => [...currentPlants, createdPlantFromDb]);
+        },
+        error: (err) => {
+          console.error('Failed to add plant. Error:', err);
+          this.closeModal(); // Closing modal first to avoid z-index bugs with toastr!
+          this.toastr.error('Could not add the plant. Please try again.', 'Error');
         }
       });
     }
