@@ -12,5 +12,8 @@
         // latest reading
         public double? CurrentMoisture { get; set; }
         public DateTime? LastUpdate { get; set; }
+
+        public string? SensorName { get; set; }
+        public string? SensorId { get; set; }
     }
 }

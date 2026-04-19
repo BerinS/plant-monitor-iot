@@ -58,7 +58,7 @@ $mobile-break: 768px;
   align-items: center;
   justify-content: center;
   margin-bottom: 45px;
-  padding-right: 3rem;
+  padding-right: 4rem;
 
   @media (max-width: $mobile-break) {
     margin-bottom: 10px;
@@ -88,6 +88,11 @@ $mobile-break: 768px;
 .plant-info{
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
 }
 
 .description { 
@@ -142,11 +147,22 @@ h3 {
   }
 }
 
-
 .stats {
   display: flex;
   align-items: center;
   justify-content: center; 
-  
+  margin-bottom: 0;
 }
 
+// To prevent pixellation on high-DPI screens - scale gauge down and wrap it in a container that maintains the original size
+.gauge-retina-wrapper {
+  width: 160px; 
+  height: 160px; 
+  
+  
+  ngx-gauge {
+    display: block; 
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+}

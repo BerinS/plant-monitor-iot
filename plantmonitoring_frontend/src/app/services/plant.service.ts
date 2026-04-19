@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Plant } from '../models/dashboard.model';
+import { Plant } from '../models/plant.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -24,5 +24,11 @@ export class PlantService {
     const url = `${this.apiUrl}/api/plants/${plantId}`;
     console.log("Deleting plant with ID:", plantId, "URL:", url);
     return this.http.delete(url);
+  }
+
+  updatePlant(plantId: number, updatedData: any) {
+    const url = `${this.apiUrl}/api/plants/${plantId}`;
+    console.log("Updating plant with ID:", plantId, "URL:", url);
+    return this.http.put(url, updatedData); 
   }
 }

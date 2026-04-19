@@ -65,6 +65,9 @@ namespace PlantMonitoringAPI.Controllers
 
                     GroupName = p.Group != null ? p.Group.Name : "No Group",
 
+                    SensorName = p.ActiveDevice != null ? p.ActiveDevice.Name : "No Sensor Assigned",
+                    SensorId = p.ActiveDevice != null ? p.ActiveDevice.Id.ToString() : null,
+
                     CurrentMoisture = p.SensorReadings
                                        .OrderByDescending(r => r.MeasuredAt)
                                        .Select(r => (double?)r.MoistureValue)

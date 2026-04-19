@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
 // components and services
 import { PlantService } from '../../services/plant.service';
 import { SensorService } from '../../services/sensor.service';
-import { DashboardWidget, Plant, SensorHealth } from '../../models/dashboard.model';
+import { DashboardWidget, SensorHealth } from '../../models/dashboard.model';
+import {  Plant } from '../../models/plant.model';
 import { HealthWidgetComponent } from '../../components/health-widget/health-widget.component';
 import { PlantCardDashComponent } from '../../components/plantCardDash/plant-card-dash.component';
 import { HistoryChartComponent } from '../../components/history-chart/history-chart.component';

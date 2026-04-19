@@ -24,5 +24,9 @@ namespace PlantMonitoringAPI.Models
         public int? CurrentPlantId { get; set; }
 
         public Plant? Plant { get; set; }
+
+        [MaxLength(30)]
+        [Column("name")]
+        public string? Name { get; set; }
     }
 }

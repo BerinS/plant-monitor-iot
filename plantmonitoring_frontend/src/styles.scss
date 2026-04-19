@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'ngx-toastr/toastr';
 
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
 :root {
   --primary-color: #1a7249;
   --primary-color-light: #288a5c;
@@ -32,3 +37,4 @@ html ::-webkit-scrollbar {
 * {
   outline: none;
 }
+

@@ -19,23 +19,37 @@
         <p>{{ plant().description }}</p> 
       </div>   
       <div class="footer">
-        <div class="plant-info"><b>GROUP:</b> {{ plant().groupName }}</div>
-        
-        <div class="plant-info"><b>CREATED AT:</b> {{ plant().createdAt | date:'HH:mm | dd/MM/yyyy' }}</div>        
+        <div class="info-row">
+          <div class="plant-info"><b>GROUP:</b></div>   
+          <div class="plant-info">{{ plant().groupName}}</div>   
+        </div>
+        <div class="info-row">
+          <div class="plant-info"><b>SENSOR:</b></div>  
+          <div class="plant-info">{{ plant().sensorName}}</div>  
+        </div>
+        <div class="info-row">
+          <div class="plant-info"><b>UPDATED:</b></div>
+          <div class="plant-info">{{ plant().lastUpdate | date:'HH:mm | dd/MM/yyyy' }}</div>
+        </div>
+        <div class="info-row">
+          <div class="plant-info"><b>CREATED AT:</b></div>  
+          <div class="plant-info">{{ plant().createdAt | date:'HH:mm | dd/MM/yyyy' }}</div>  
+        </div>
       </div>
     </div>
 
    <div class="item2 stats">
-      <ngx-gauge 
-        [type]="'arch'" 
-        [value]="plant().currentMoisture" 
-        [thick]="9" 
-        [size]="140"
-        [foregroundColor]="isLow() ? '#ca1b18' : '#1e8e3e'"
-        [cap]="'butt'"
-        [duration]="600" >
-       
-      </ngx-gauge>
+      <div class="gauge-retina-wrapper">
+        <ngx-gauge 
+          [type]="'arch'" 
+          [value]="plant().currentMoisture" 
+          [thick]="22" 
+          [size]="340"
+          [foregroundColor]="isLow() ? '#ca1b18' : '#1e8e3e'"
+          [cap]="'butt'"
+          [duration]="400">
+        </ngx-gauge>
+      </div>
     </div>
       
     
