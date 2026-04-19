@@ -1,7 +1,7 @@
 import { Component, input, computed, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule, Color, ScaleType } from '@swimlane/ngx-charts'; 
-import { Plant } from '../../models/dashboard.model';
+import { Plant } from '../../models/plant.model';
 import { curveNatural, curveMonotoneX } from 'd3-shape'; // used for line chart curve interpolation
 
 @Component({

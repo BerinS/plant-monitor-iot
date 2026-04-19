@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
 import { LucideAngularModule, Droplets, Pen, Trash2 } from 'lucide-angular';
-import { Plant } from '../../models/my-plants.model'; 
+import { Plant } from '../../models/plant.model'; 
 import { NgxGaugeModule } from 'ngx-gauge';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, input, computed } from '@angular/core';
-import { Plant } from '../../models/dashboard.model';
+import { Plant } from '../../models/plant.model';
 import { LucideAngularModule, Droplets, Info } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 
