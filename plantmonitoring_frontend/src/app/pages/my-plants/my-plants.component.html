@@ -3,11 +3,19 @@
     <p class="button-text">Add Plant</p>
     <lucide-icon style="padding-top: 2px;" [img]="Plus" size="20"></lucide-icon>
   </button>
+
+  <div class="sort-wrapper">
+    <select id="sortPlants" [ngModel]="sortMode()" (ngModelChange)="sortMode.set($event)">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="name">Alphabetical</option>
+    </select>
+  </div>
   
 </div>
 
 <div class="my-plants-grid">  
-  @for (p of plants(); track p.id) {
+  @for (p of sortedPlants(); track p.id) {
     <div class="widget-card">
       <app-plant-card-my-plants 
         [plant]="p" 
