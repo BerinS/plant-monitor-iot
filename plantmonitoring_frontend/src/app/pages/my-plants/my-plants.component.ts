@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LucideAngularModule, Sprout, Plus } from 'lucide-angular';
@@ -28,6 +28,7 @@ export class MyPlantsComponent {
   modalType = signal<'default' | 'danger' | 'info'>('default');
   modalMode = signal<'edit' | 'delete' | 'add' | 'default'>('default');
   plants = signal<Plant[]>([]); 
+  sortMode = signal<'newest' | 'oldest' | 'name'>('newest');
   groups = toSignal(this.groupService.getGroups(), { initialValue: [] });
 
   constructor() {
@@ -35,6 +36,22 @@ export class MyPlantsComponent {
       this.plants.set(data);
     });
   }
+
+  sortedPlants = computed(() => {
+    // [...this.plants()] creates a copy
+    const currentPlants = [...this.plants()]; 
+
+    switch (this.sortMode()) {
+      case 'newest':
+        return currentPlants.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case 'oldest':
+        return currentPlants.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      case 'name':
+        return currentPlants.sort((a, b) => a.name.localeCompare(b.name));
+      default:
+        return currentPlants;
+    }
+  }); 
 
   handleEdit(plant: Plant) {
     this.activePlant.set({ ...plant });
