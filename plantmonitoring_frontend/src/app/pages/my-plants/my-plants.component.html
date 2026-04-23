@@ -29,7 +29,7 @@
 <app-modal 
   [type]="modalType()" 
   [isOpen]="isModalOpen()" 
-  [title]="modalMode() === 'edit' ? 'Edit Plant' : 'Delete Plant'"
+  [title]="modalMode() === 'add' ? 'Add New Plant' : modalMode() === 'edit' ? 'Edit Plant' : 'Delete Plant'"
   (closed)="closeModal()">
   
   @if (activePlant(); as plant) {

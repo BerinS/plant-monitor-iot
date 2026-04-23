@@ -17,7 +17,8 @@ namespace PlantMonitoringAPI.Controllers
             _context = context;
         }
 
-        [HttpPost]
+        // POST: api/sensor/data
+        [HttpPost("data")]
         public async Task<IActionResult> PostReading([FromBody] CreateSensorDataDto request)
         {
             // security check via valid api token
@@ -46,6 +47,69 @@ namespace PlantMonitoringAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Data saved", id = dataPoint.Id });
+        }
+
+        // POST: api/sensor - make new sensor
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> CreateSensor([FromBody] SensorDto request)
+        {
+            if (!string.IsNullOrEmpty(request.MacAddress))
+            {
+                var existingDevice = await _context.Devices
+                    .FirstOrDefaultAsync(d => d.MacAddress == request.MacAddress);
+
+                if (existingDevice != null)
+                {
+                    return BadRequest(new { message = "A sensor with this MAC Address already exists." });
+                }
+            }
+
+            var newDevice = new Device
+            {
+                Name = request.Name,
+                MacAddress = request.MacAddress,
+                Description = request.Description,
+                CurrentPlantId = request.CurrentPlantId,
+                GroupId = request.GroupId,
+                ApiToken = Guid.NewGuid()
+            };
+
+            _context.Devices.Add(newDevice);
+            await _context.SaveChangesAsync();
+
+            var createdSensorDto = new SensorDto
+            {
+                Id = newDevice.Id,
+                Name = newDevice.Name,
+                MacAddress = newDevice.MacAddress,
+                Description = newDevice.Description,
+                CurrentPlantId = newDevice.CurrentPlantId,
+                GroupId = newDevice.GroupId,
+                ApiToken = newDevice.ApiToken
+            };
+
+            return Ok(createdSensorDto);
+        }
+
+        // GET: api/sensor
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<SensorDto>>> GetAllSensors()
+        {
+            var sensors = await _context.Devices
+                .Select(d => new SensorDto
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    MacAddress = d.MacAddress,
+                    ApiToken = d.ApiToken,
+                    CurrentPlantId = d.CurrentPlantId,
+                    GroupId = d.GroupId,
+                    Description = d.Description
+                })
+                .ToListAsync();
+
+            return Ok(sensors);
         }
 
         [HttpGet("{plantId}/history")]
@@ -119,20 +183,65 @@ namespace PlantMonitoringAPI.Controllers
             return Ok(devices);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReading(long id)
+        // PUT: api/sensor/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSensor(int id, [FromBody] SensorDto request)
         {
-            var reading = await _context.SensorData.FindAsync(id);
-
-            if (reading == null)
+            if (id != request.Id)
             {
-                return NotFound();
+                return BadRequest("ID mismatch");
             }
 
-            _context.SensorData.Remove(reading);
+            var device = await _context.Devices.FindAsync(id);
+            if (device == null)
+            {
+                return NotFound(new { message = "Sensor not found" });
+            }
+
+            if (request.CurrentPlantId.HasValue)
+            {
+                var plantExists = await _context.Plants.AnyAsync(p => p.Id == request.CurrentPlantId.Value);
+                if (!plantExists)
+                {
+                    return BadRequest(new { message = $"Cannot assign sensor: Plant with ID {request.CurrentPlantId.Value} does not exist." });
+                }
+            }
+
+            if (request.GroupId.HasValue)
+            {
+                var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId.Value);
+                if (!groupExists)
+                {
+                    return BadRequest(new { message = $"Cannot assign sensor: Group with ID {request.GroupId.Value} does not exist." });
+                }
+            }
+
+            // Update fields
+            device.Name = request.Name;
+            device.MacAddress = request.MacAddress;
+            device.Description = request.Description;
+            device.CurrentPlantId = request.CurrentPlantId;
+            device.GroupId = request.GroupId;
+
             await _context.SaveChangesAsync();
 
-            return NoContent(); 
+            return Ok(new { message = "Sensor updated successfully" });
+        }
+
+        // DELETE: api/sensor/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSensor(int id)
+        {
+            var device = await _context.Devices.FindAsync(id);
+            if (device == null)
+            {
+                return NotFound(new { message = "Sensor not found" });
+            }
+
+            _context.Devices.Remove(device);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

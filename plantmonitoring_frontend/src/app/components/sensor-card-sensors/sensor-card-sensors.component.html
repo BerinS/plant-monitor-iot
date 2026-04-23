@@ -1,0 +1,46 @@
+<div class="sensor-card">
+  <div class="sensor-header" style="justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <lucide-icon [img]="CircleDot" size="12" class="ok"></lucide-icon>
+      <h3>{{ sensor().name || 'Unnamed Sensor' }}</h3>
+    </div>
+    
+    <div class="corner-icon">      
+      <span class="pen" (click)="onEdit()">
+        <lucide-icon [img]="PenIcon" size="20"></lucide-icon>
+      </span>  
+      <span class="trash" (click)="onDelete()">
+        <lucide-icon [img]="TrashIcon" size="20"></lucide-icon>
+      </span>
+    </div>  
+  </div>
+
+  <div class="sensor-body">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">MAC Address</span>
+        <span class="value">{{ sensor().macAddress }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Group ID</span>
+        <span class="value">{{ sensor().groupId }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Plant ID</span>
+        <span class="value link">{{ sensor().currentPlantId }}</span>
+      </div>
+    </div>
+
+    <div class="description-section">
+      <span class="label">Description</span>
+      <p class="desc-text">{{ sensor().description }}</p>
+    </div>
+
+    <div class="token-wrapper">
+      <span class="label">API Token</span>
+      <div class="token-code">
+        <code>{{ sensor().apiToken }}</code>
+      </div>
+    </div>
+  </div>
+</div>
