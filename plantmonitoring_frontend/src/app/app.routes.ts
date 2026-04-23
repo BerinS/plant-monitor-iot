@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './main-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MyPlantsComponent } from './pages/my-plants/my-plants.component';
+import { SensorsComponent } from './pages/sensors/sensors.component';
 
 export const routes: Routes = [
   {
@@ -20,7 +21,10 @@ export const routes: Routes = [
       {
         path: 'my-plants',
         component: MyPlantsComponent
-      }
+      },
+      {
+        path: 'sensors',
+        component: SensorsComponent      }
       
     ]
   }
