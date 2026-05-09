@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PlantMonitoringAPI.Data;
 using PlantMonitoringAPI.DTOs;
 using PlantMonitoringAPI.Models;
+using PlantMonitoringAPI.Services;
 
 namespace PlantMonitoringAPI.Controllers
 {
@@ -11,36 +12,37 @@ namespace PlantMonitoringAPI.Controllers
     public class SensorController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly TokenService _tokenService;
 
-        public SensorController(AppDbContext context)
+        public SensorController(AppDbContext context, TokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // POST: api/sensor/data
+        // Still works via HTTP, here during transition
         [HttpPost("data")]
         public async Task<IActionResult> PostReading([FromBody] CreateSensorDataDto request)
         {
-            // security check via valid api token
+            
             var device = await _context.Devices
-                .FirstOrDefaultAsync(d => d.ApiToken == request.Token);
+                .FirstOrDefaultAsync(d => d.Id == request.DeviceId);
 
             if (device == null)
-            {
-                return Unauthorized(new { message = "Invalid API Token" });
-            }
+                return Unauthorized(new { message = "Invalid credentials" });
+
+            if (!_tokenService.VerifyToken(request.Token, device.ApiTokenHash, device.ApiTokenSalt))
+                return Unauthorized(new { message = "Invalid credentials" });
 
             if (device.CurrentPlantId == null)
-            {
                 return BadRequest(new { message = "Device is not assigned to any plant" });
-            }
 
-            //  mapping DTO to model
             var dataPoint = new SensorData
             {
-                PlantId = device.CurrentPlantId.Value, 
+                PlantId = device.CurrentPlantId.Value,
                 MoistureValue = request.Value,
-                MeasuredAt = DateTime.UtcNow 
+                MeasuredAt = DateTime.UtcNow
             };
 
             _context.SensorData.Add(dataPoint);
@@ -49,21 +51,23 @@ namespace PlantMonitoringAPI.Controllers
             return Ok(new { message = "Data saved", id = dataPoint.Id });
         }
 
-        // POST: api/sensor - make new sensor
-        [HttpPost]
+        // POST: api/sensor
         [HttpPost]
         public async Task<IActionResult> CreateSensor([FromBody] SensorDto request)
         {
             if (!string.IsNullOrEmpty(request.MacAddress))
             {
-                var existingDevice = await _context.Devices
+                var existing = await _context.Devices
                     .FirstOrDefaultAsync(d => d.MacAddress == request.MacAddress);
 
-                if (existingDevice != null)
-                {
+                if (existing != null)
                     return BadRequest(new { message = "A sensor with this MAC Address already exists." });
-                }
             }
+
+            // Generate plain token
+            var plainToken = Guid.NewGuid().ToString();
+            var salt = _tokenService.GenerateSalt();
+            var hash = _tokenService.HashToken(plainToken, salt);
 
             var newDevice = new Device
             {
@@ -72,13 +76,15 @@ namespace PlantMonitoringAPI.Controllers
                 Description = request.Description,
                 CurrentPlantId = request.CurrentPlantId,
                 GroupId = request.GroupId,
-                ApiToken = Guid.NewGuid()
+                ApiTokenHash = hash,
+                ApiTokenSalt = salt
             };
 
             _context.Devices.Add(newDevice);
             await _context.SaveChangesAsync();
 
-            var createdSensorDto = new SensorDto
+            // Return the plain token once for copying
+            return Ok(new CreatedSensorDto
             {
                 Id = newDevice.Id,
                 Name = newDevice.Name,
@@ -86,10 +92,8 @@ namespace PlantMonitoringAPI.Controllers
                 Description = newDevice.Description,
                 CurrentPlantId = newDevice.CurrentPlantId,
                 GroupId = newDevice.GroupId,
-                ApiToken = newDevice.ApiToken
-            };
-
-            return Ok(createdSensorDto);
+                PlainApiToken = plainToken   
+            });
         }
 
         // GET: api/sensor
@@ -102,7 +106,6 @@ namespace PlantMonitoringAPI.Controllers
                     Id = d.Id,
                     Name = d.Name,
                     MacAddress = d.MacAddress,
-                    ApiToken = d.ApiToken,
                     CurrentPlantId = d.CurrentPlantId,
                     GroupId = d.GroupId,
                     Description = d.Description

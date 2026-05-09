@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using PlantMonitoringAPI.Data;
 using PlantMonitoringAPI.Models;
+using PlantMonitoringAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
-
+builder.Services.AddSingleton<TokenService>();
+builder.Services.AddHostedService<MqttBackgroundService>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

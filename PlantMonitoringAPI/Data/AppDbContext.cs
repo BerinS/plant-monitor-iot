@@ -38,7 +38,7 @@ public class AppDbContext : DbContext
 
         // indexing 
         modelBuilder.Entity<Device>()
-            .HasIndex(d => d.ApiToken)
+            .HasIndex(d => d.MacAddress)
             .IsUnique();
 
         modelBuilder.Entity<SensorData>()

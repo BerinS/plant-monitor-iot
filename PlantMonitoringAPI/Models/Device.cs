@@ -20,10 +20,15 @@ namespace PlantMonitoringAPI.Models
         public string? Name { get; set; }
 
         [Required]
-        [Column("api_token")]
-        public Guid ApiToken { get; set; } 
+        [MaxLength(256)]
+        [Column("api_token_hash")]
+        public string ApiTokenHash { get; set; } = string.Empty;
 
-        // plant fk
+        [Required]
+        [MaxLength(64)]
+        [Column("api_token_salt")]
+        public string ApiTokenSalt { get; set; } = string.Empty;
+
         [Column("current_plant_id")]
         public int? CurrentPlantId { get; set; }
 

@@ -4,13 +4,14 @@ namespace PlantMonitoringAPI.DTOs
 {
     public class CreateSensorDataDto
     {
-        // token sent by device
         [Required]
-        public Guid Token { get; set; }
+        public int DeviceId { get; set; }     
 
-        // sensor reading
         [Required]
-        [Range(0, 100)] 
+        public string Token { get; set; } = string.Empty;
+
+        [Required]
+        [Range(0, 100)]
         public double Value { get; set; }
     }
 }
