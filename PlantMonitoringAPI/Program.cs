@@ -1,36 +1,38 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using PlantMonitoringAPI.Data;
-using PlantMonitoringAPI.Models;
 using PlantMonitoringAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Prevent MQTT background service failure from taking down entire app
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+});
+
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddHostedService<MqttBackgroundService>();
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
-
-// register the AppDbContext
+// Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// CORS services
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
-        policy =>
-        {
-            policy.AllowAnyOrigin()                     //WithOrigins("http://localhost:4200") to allow specific origin
-                  .AllowAnyMethod()                     
-                  .AllowAnyHeader();                    
-        });
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -38,11 +40,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAngularApp");
-
-//app.UseHttpsRedirection(); // had to disable to test on mobile 
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
