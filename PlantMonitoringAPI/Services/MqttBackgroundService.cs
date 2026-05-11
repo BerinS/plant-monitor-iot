@@ -1,7 +1,6 @@
 ﻿using MQTTnet;
 using MQTTnet.Client;
 using PlantMonitoringAPI.Data;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 
@@ -13,6 +12,13 @@ namespace PlantMonitoringAPI.Services
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
         private IMqttClient? _mqttClient;
+
+        // maps to the Value property on TelemetryPayload
+        // Created once and reused to avoid allocating on every message
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
         public MqttBackgroundService(
             ILogger<MqttBackgroundService> logger,
@@ -40,59 +46,84 @@ namespace PlantMonitoringAPI.Services
                 .WithCleanSession()
                 .Build();
 
-            // Reconnect automatically if broker restarts
+            // Fires when the connection to EMQX drops
+            // Waits 5 seconds then attempts to reconnect and resubscribe            
             _mqttClient.DisconnectedAsync += async e =>
             {
-                _logger.LogWarning("Disconnected from MQTT broker. Reconnecting...");
+                _logger.LogWarning("Disconnected from MQTT broker. Reconnecting in 5 seconds...");
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-                try { await _mqttClient.ConnectAsync(options, stoppingToken); }
-                catch { _logger.LogError("Reconnect failed."); }
+                try
+                {
+                    await _mqttClient.ConnectAsync(options, stoppingToken);
+                    await _mqttClient.SubscribeAsync("devices/+/telemetry", cancellationToken: stoppingToken);
+                    _logger.LogInformation("Reconnected and resubscribed.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Reconnect failed.");
+                }
             };
 
             _mqttClient.ApplicationMessageReceivedAsync += HandleMessageAsync;
 
             await _mqttClient.ConnectAsync(options, stoppingToken);
 
-            // Subscribe to telemetry from all devices using wildcard
+            // Wildcard + matches exactly one topic segment
+            // devices/+/telemetry matches devices/1/telemetry, devices/8/telemetry etc
             await _mqttClient.SubscribeAsync("devices/+/telemetry", cancellationToken: stoppingToken);
 
             _logger.LogInformation("MQTT background service connected and subscribed.");
 
+            // Keep the background service alive until the app shuts down
+            // The cancellation token is signalled on app shutdown,
+            // which causes this delay to throw OperationCanceledException
+            // and the service exits cleanly
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
 
         private async Task HandleMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
-            // Topic format: devices/{deviceId}/telemetry
-            var parts = e.ApplicationMessage.Topic.Split('/');
-            if (parts.Length != 3) return;
+                        var parts = e.ApplicationMessage.Topic.Split('/');
+            if (parts.Length != 3)
+            {
+                _logger.LogWarning("Unexpected topic format: {Topic}", e.ApplicationMessage.Topic);
+                return;
+            }
 
-            if (!int.TryParse(parts[1], out var deviceId)) return;
+            if (!int.TryParse(parts[1], out var deviceId))
+            {
+                _logger.LogWarning("Could not parse device ID from topic: {Topic}", e.ApplicationMessage.Topic);
+                return;
+            }
 
             var payload = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
-
             _logger.LogInformation("Telemetry from device {DeviceId}: {Payload}", deviceId, payload);
 
             try
-            {
-                var data = JsonSerializer.Deserialize<TelemetryPayload>(payload);
-                if (data == null) return;
+            {             
+                var data = JsonSerializer.Deserialize<TelemetryPayload>(payload, _jsonOptions);
+                if (data == null)
+                {
+                    _logger.LogWarning("Failed to deserialize telemetry payload from device {DeviceId}: {Payload}", deviceId, payload);
+                    return;
+                }
 
-                // EF Core DbContext is scoped, not singleton
-                // creating a scope here to resolve it correctly inside this singleton background service
+                // AppDbContext is scoped — cannot be injected directly into a singleton
+                // A new scope is created per message so each DB operation
+                // gets its own context instance that is disposed after the save
                 using var scope = _scopeFactory.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 var device = await context.Devices.FindAsync(deviceId);
                 if (device == null)
                 {
-                    _logger.LogWarning("Received telemetry for unknown device {DeviceId}", deviceId);
+                    _logger.LogWarning("Telemetry received for unknown device {DeviceId}", deviceId);
                     return;
                 }
 
                 if (device.CurrentPlantId == null)
                 {
-                    _logger.LogWarning("Device {DeviceId} has no plant assigned", deviceId);
+                    _logger.LogWarning("Device {DeviceId} has no plant assigned — reading discarded", deviceId);
                     return;
                 }
 
@@ -114,15 +145,22 @@ namespace PlantMonitoringAPI.Services
             }
         }
 
-        // For sending commands to a device
+        // Called from anywhere to push a command to a specific device
+        // The ESP32 receives it immediately via its active MQTT subscription
         public async Task SendCommandAsync(int deviceId, object command)
         {
-            if (_mqttClient == null || !_mqttClient.IsConnected) return;
+            if (_mqttClient == null || !_mqttClient.IsConnected)
+            {
+                _logger.LogWarning("Cannot send command to device {DeviceId} — MQTT client not connected", deviceId);
+                return;
+            }
 
             var payload = JsonSerializer.Serialize(command);
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic($"devices/{deviceId}/commands")
                 .WithPayload(payload)
+                // AtLeastOnce — EMQX retries delivery until ESP32 acknowledges.
+                // Ensures commands are not silently dropped.
                 .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                 .Build();
 
