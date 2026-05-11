@@ -9,7 +9,7 @@ namespace PlantMonitoringAPI.Services
         public string GenerateSalt()
         {
             var bytes = RandomNumberGenerator.GetBytes(32);
-            return Convert.ToHexString(bytes).ToLower();
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
 
         // SHA256(plainToken + salt) — salt appended as suffix
