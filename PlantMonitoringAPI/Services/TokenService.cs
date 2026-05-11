@@ -18,7 +18,7 @@ namespace PlantMonitoringAPI.Services
         {
             var input = plainToken + salt;
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-            return Convert.ToHexString(bytes).ToLower();
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
 
         // Used at auth time: hash what the device sent, compare to DB
