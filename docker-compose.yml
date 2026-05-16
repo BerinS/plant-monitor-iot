@@ -1,38 +1,49 @@
-version: '3.8'
-
 services:
-  # DB
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}          
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-
-      # mount SQL script to init folder
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - plant-net
     restart: always
 
-  # Backend
-  backend:
-    build: ./PlantMonitoringAPI
+  emqx:
+    image: emqx/emqx:5.8
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      EMQX_NODE__NAME: emqx@127.0.0.1
+    ports:
+      - "1883:1883"   # MQTT
+      - "18083:18083" # Dashboard
     depends_on:
       - postgres
     networks:
       - plant-net
     restart: always
 
-  # Frontend and proxy
+  backend:
+    build: ./PlantMonitoringAPI
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Mqtt__BrokerHost: emqx
+      Mqtt__BrokerPort: "1883"
+      Mqtt__Username:   "backend-service"
+      Mqtt__Password:   ${MQTT_BACKEND_PASSWORD}
+    depends_on:
+      - postgres
+      - emqx
+    networks:
+      - plant-net
+    restart: always
+
   frontend:
     build: ./plantmonitoring_frontend
     ports:
-      - "80:80"  # expose Port 80 of container to port 80 VM
+      - "80:80"
     depends_on:
       - backend
     networks:
