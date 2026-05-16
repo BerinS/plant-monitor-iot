@@ -47,7 +47,7 @@ Architecture: Microservices - Frontend, Backend, Database - orchestrated via Doc
 [![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](#)
 
 
-**DevOps & Infrastructure:** Docker, Portainer, ProxMox  <br>
+**Infrastructure:** Docker, Portainer, ProxMox  <br>
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
 [![Portainer](https://img.shields.io/badge/Portainer-C080FF?logo=Portainer&logoColor=fff)](#)
 
