@@ -58,18 +58,22 @@ namespace PlantMonitoringAPI.Services
                     await _mqttClient.SubscribeAsync("devices/+/telemetry", cancellationToken: stoppingToken);
                     _logger.LogInformation("Reconnected and resubscribed.");
                 }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogInformation("Reconnect cancelled, application shutting down.");
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Reconnect failed.");
                 }
             };
 
+            // Handler called sequentially by default, this could be a problem later but for now it's ok
             _mqttClient.ApplicationMessageReceivedAsync += HandleMessageAsync;
 
             await _mqttClient.ConnectAsync(options, stoppingToken);
 
-            // Wildcard + matches exactly one topic segment
-            // devices/+/telemetry matches devices/1/telemetry, devices/8/telemetry etc
+            // Wildcard + matches exactly one topic segment, devices/1/telemetry
             await _mqttClient.SubscribeAsync("devices/+/telemetry", cancellationToken: stoppingToken);
 
             _logger.LogInformation("MQTT background service connected and subscribed.");
@@ -83,7 +87,8 @@ namespace PlantMonitoringAPI.Services
 
         private async Task HandleMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
-                        var parts = e.ApplicationMessage.Topic.Split('/');
+            var parts = e.ApplicationMessage.Topic.Split('/');
+
             if (parts.Length != 3)
             {
                 _logger.LogWarning("Unexpected topic format: {Topic}", e.ApplicationMessage.Topic);
@@ -108,9 +113,8 @@ namespace PlantMonitoringAPI.Services
                     return;
                 }
 
-                // AppDbContext is scoped — cannot be injected directly into a singleton
-                // A new scope is created per message so each DB operation
-                // gets its own context instance that is disposed after the save
+                // AppDbContext is scoped and cannot be injected directly into a singleton
+                // A new scope is created per message so each DB operation gets its own context instance that is disposed after the save
                 using var scope = _scopeFactory.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
@@ -145,27 +149,34 @@ namespace PlantMonitoringAPI.Services
             }
         }
 
-        // Called from anywhere to push a command to a specific device
-        // The ESP32 receives it immediately via its active MQTT subscription
-        public async Task SendCommandAsync(int deviceId, object command)
+
+        // Called from anywhere to push a command to a device, returns true if the broker accepted the message, false otherwise
+        public async Task<bool> SendCommandAsync(int deviceId, object command)
         {
             if (_mqttClient == null || !_mqttClient.IsConnected)
             {
                 _logger.LogWarning("Cannot send command to device {DeviceId} — MQTT client not connected", deviceId);
-                return;
+                return false;
             }
 
-            var payload = JsonSerializer.Serialize(command);
-            var message = new MqttApplicationMessageBuilder()
-                .WithTopic($"devices/{deviceId}/commands")
-                .WithPayload(payload)
-                // AtLeastOnce — EMQX retries delivery until ESP32 acknowledges.
-                // Ensures commands are not silently dropped.
-                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
-                .Build();
+            try
+            {
+                var payload = JsonSerializer.Serialize(command);
+                var message = new MqttApplicationMessageBuilder()
+                    .WithTopic($"devices/{deviceId}/commands")
+                    .WithPayload(payload)
+                    .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                    .Build();
 
-            await _mqttClient.PublishAsync(message);
-            _logger.LogInformation("Sent command to device {DeviceId}: {Payload}", deviceId, payload);
+                await _mqttClient.PublishAsync(message);
+                _logger.LogInformation("Sent command to device {DeviceId}: {Payload}", deviceId, payload);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send command to device {DeviceId}", deviceId);
+                return false;
+            }
         }
     }
 

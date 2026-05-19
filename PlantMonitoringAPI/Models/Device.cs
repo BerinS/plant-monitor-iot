@@ -10,14 +10,10 @@ namespace PlantMonitoringAPI.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [MaxLength(17)]
-        [Column("mac_address")]
-        public string? MacAddress { get; set; }
-
         [Required]
         [MaxLength(30)]
         [Column("name")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(256)]
@@ -29,9 +25,12 @@ namespace PlantMonitoringAPI.Models
         [Column("api_token_salt")]
         public string ApiTokenSalt { get; set; } = string.Empty;
 
+        [MaxLength(17)]
+        [Column("mac_address")]
+        public string? MacAddress { get; set; }
+
         [Column("current_plant_id")]
         public int? CurrentPlantId { get; set; }
-
         public Plant? Plant { get; set; }
 
         [Column("group_id")]

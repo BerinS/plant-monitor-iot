@@ -36,10 +36,11 @@ public class AppDbContext : DbContext
             .HasForeignKey<Device>(d => d.CurrentPlantId)
             .OnDelete(DeleteBehavior.SetNull); // if plant is deleted device is unassigned
 
-        // indexing 
+        // MacAddress partial unique index, nulls excluded
         modelBuilder.Entity<Device>()
             .HasIndex(d => d.MacAddress)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("mac_address IS NOT NULL");
 
         modelBuilder.Entity<SensorData>()
             .HasIndex(sd => new { sd.PlantId, sd.MeasuredAt }); // Composite index for graphs
