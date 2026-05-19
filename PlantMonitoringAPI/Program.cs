@@ -5,7 +5,7 @@ using PlantMonitoringAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Prevent MQTT background service failure from taking down entire app
+// Prevents MQTT background service failure from taking down entire app
 builder.Services.Configure<HostOptions>(options =>
 {
     options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;

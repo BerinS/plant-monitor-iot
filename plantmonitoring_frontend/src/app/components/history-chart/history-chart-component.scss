@@ -1,35 +1,51 @@
 :host {
   display: block;
   width: 100%;
-  height: 100%; 
+  height: 100%;
+}
+
+.chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .chart-container {
-  height: 100%; /* must have explicit height */
+  flex: 1;
+  min-height: 260px;
   width: 100%;
-  display: flex;    
-  align-items: center;
-  justify-content: center;   
-  min-height: 250px; 
+  position: relative;
 }
 
+.echart {
+  width: 100%;
+  height: 300px;  // ECharts needs an explicit pixel height on the container
+}
 
-// pill toggle buttons
-.controls { 
-  display: flex; 
-  justify-content: flex-end; 
-  margin-bottom: 10px; 
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
 }
 
 .time-toggles {
   display: flex;
-  background: #f0f0f000;
+  background: transparent;
   border-radius: 10px;
   padding: 3px;
 }
 
 button {
-  border: none; 
+  border: none;
   background: none;
   padding: 4px 12px;
   border-radius: 15px;
@@ -37,11 +53,16 @@ button {
   font-weight: 500;
   color: #555;
   cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.active {
+    background: white;
+    color: #1a7249;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover:not(.active) {
+    color: #1a7249;
+  }
 }
 
-button.active {
-  background: white;
-  color: #1a7249;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-  
