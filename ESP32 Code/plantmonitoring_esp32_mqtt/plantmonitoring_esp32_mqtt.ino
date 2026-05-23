@@ -4,15 +4,15 @@
 #include "soc/rtc_cntl_reg.h"
 
 // ── WiFi ─────────────────────────────────────────────────────────────────────
-const char* ssid         = "wifi";
-const char* wifiPassword = "pass";
+const char* ssid         = "";
+const char* wifiPassword = "***REMOVED***";
 
 // ── MQTT ─────────────────────────────────────────────────────────────────────
-const char* mqttBroker   = "ip";
+const char* mqttBroker   = "192.168.1.10";
 const int   mqttPort     = 1883;
 
 const char* mqttUsername = "8";
-const char* mqttPassword = "your-plain-token";
+const char* mqttPassword = "***REMOVED***";
 
 String telemetryTopic;
 String commandTopic;

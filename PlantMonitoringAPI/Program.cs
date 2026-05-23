@@ -14,7 +14,9 @@ builder.Services.Configure<HostOptions>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<TokenService>();
-builder.Services.AddHostedService<MqttBackgroundService>();
+
+builder.Services.AddSingleton<MqttBackgroundService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<MqttBackgroundService>());
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
