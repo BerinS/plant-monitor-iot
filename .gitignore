@@ -8,7 +8,7 @@ Pump test/
 # Ignore database data
 postgres-data/
 
-init.sql
+plantmonitoring_backup.sql
 
 *.psd
 
