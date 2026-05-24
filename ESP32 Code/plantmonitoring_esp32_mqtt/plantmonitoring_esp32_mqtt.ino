@@ -5,14 +5,15 @@
 
 // ── WiFi ─────────────────────────────────────────────────────────────────────
 const char* ssid         = "";
-const char* wifiPassword = "***REMOVED***";
+const char* wifiPassword = "";
 
 // ── MQTT ─────────────────────────────────────────────────────────────────────
-const char* mqttBroker   = "192.168.1.10";
+const char* mqttBroker   = "ip";
 const int   mqttPort     = 1883;
 
-const char* mqttUsername = "8";
-const char* mqttPassword = "***REMOVED***";
+// ── Device ID
+const char* mqttUsername = "9";
+const char* mqttPassword = "key";
 
 String telemetryTopic;
 String commandTopic;
@@ -69,7 +70,7 @@ void setup() {
     // This is critical — on boot the pin floats briefly before pinMode.
     // Setting LOW immediately ensures the pump doesn't fire on startup.
     pinMode(PUMP_PIN, OUTPUT);
-    digitalWrite(PUMP_PIN, LOW);
+    digitalWrite(PUMP_PIN, HIGH);
 
     // Derive topics from device ID — single source of truth
     telemetryTopic = "devices/" + String(mqttUsername) + "/telemetry";
@@ -218,7 +219,7 @@ void activatePump(unsigned long durationMs) {
     Serial.print(durationMs / 1000);
     Serial.println(" seconds.");
 
-    digitalWrite(PUMP_PIN, HIGH);
+    digitalWrite(PUMP_PIN, LOW);
     pumpRunning   = true;
     pumpStartTime = millis();
     pumpDuration  = durationMs; 
@@ -227,7 +228,7 @@ void activatePump(unsigned long durationMs) {
 void deactivatePump() {
     if (!pumpRunning) return;
 
-    digitalWrite(PUMP_PIN, LOW);
+    digitalWrite(PUMP_PIN, HIGH);
     pumpRunning = false;
     pumpDuration = 0;
     Serial.println("Pump OFF.");
