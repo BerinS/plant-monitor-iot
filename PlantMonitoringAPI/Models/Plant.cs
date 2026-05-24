@@ -13,23 +13,25 @@ namespace PlantMonitoringAPI.Models
         [Required]
         [MaxLength(100)]
         [Column("name")]
-        public string Name { get; set; } 
+        public string Name { get; set; } = string.Empty;
 
-        [MaxLength(100)]
+        [MaxLength(255)]
         [Column("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // fk to Group
         [Column("group_id")]
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
-        // link back to Group
-        public PlantMonitoringAPI.Models.Group Group { get; set; }
+        // if null the no check runs
+        [Range(0, 100)]
+        [Column("moisture_threshold")]
+        public int? MoistureThreshold { get; set; }
 
-        // one plant has many sensor readings
+        public Group? Group { get; set; }
+
         public ICollection<SensorData> SensorReadings { get; set; } = new List<SensorData>();
 
         public Device? ActiveDevice { get; set; }

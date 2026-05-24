@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
             .HasOne(p => p.Group)
             .WithMany(g => g.Plants)
             .HasForeignKey(p => p.GroupId)
-            .OnDelete(DeleteBehavior.Restrict); // prevent deleting a room if plants exist
+            .OnDelete(DeleteBehavior.SetNull); // group deletion unassigns plants
 
         // Plants -> SensorData (One-to-Many)
         modelBuilder.Entity<SensorData>()

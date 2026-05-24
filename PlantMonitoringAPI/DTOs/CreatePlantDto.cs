@@ -12,6 +12,9 @@ namespace PlantMonitoringAPI.DTOs
         public string Description { get; set; } = string.Empty;
 
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid group")]
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
+
+        [Range(0, 100, ErrorMessage = "Threshold must be between 0 and 100.")]
+        public int? MoistureThreshold { get; set; }
     }
 }

@@ -28,14 +28,12 @@ namespace PlantMonitoringAPI.Controllers
                     Name = p.Name,
                     Description = p.Description,
                     CreatedAt = p.CreatedAt,
-
+                    MoistureThreshold = p.MoistureThreshold,
                     GroupName = p.Group != null ? p.Group.Name : "No Group",
-
                     CurrentMoisture = p.SensorReadings
-                                       .OrderByDescending(r => r.MeasuredAt) 
-                                       .Select(r => (double?)r.MoistureValue) 
+                                       .OrderByDescending(r => r.MeasuredAt)
+                                       .Select(r => (double?)r.MoistureValue)
                                        .FirstOrDefault(),
-
                     LastUpdate = p.SensorReadings
                                   .OrderByDescending(r => r.MeasuredAt)
                                   .Select(r => (DateTime?)r.MeasuredAt)
@@ -44,9 +42,7 @@ namespace PlantMonitoringAPI.Controllers
                 .FirstOrDefaultAsync();
 
             if (plantDto == null)
-            {
-                return NotFound();
-            }
+                return NotFound(new { message = $"Plant with ID {id} not found." });
 
             return Ok(plantDto);
         }
@@ -62,17 +58,14 @@ namespace PlantMonitoringAPI.Controllers
                     Name = p.Name,
                     Description = p.Description,
                     CreatedAt = p.CreatedAt,
-
+                    MoistureThreshold = p.MoistureThreshold,
                     GroupName = p.Group != null ? p.Group.Name : "No Group",
-
                     SensorName = p.ActiveDevice != null ? p.ActiveDevice.Name : "No Sensor Assigned",
                     SensorId = p.ActiveDevice != null ? p.ActiveDevice.Id.ToString() : null,
-
                     CurrentMoisture = p.SensorReadings
                                        .OrderByDescending(r => r.MeasuredAt)
                                        .Select(r => (double?)r.MoistureValue)
                                        .FirstOrDefault(),
-
                     LastUpdate = p.SensorReadings
                                   .OrderByDescending(r => r.MeasuredAt)
                                   .Select(r => (DateTime?)r.MeasuredAt)
@@ -83,14 +76,16 @@ namespace PlantMonitoringAPI.Controllers
             return Ok(plants);
         }
 
+        // POST: api/plants
         [HttpPost]
-        public async Task<IActionResult> PostPlant([FromBody] CreatePlantDto request) 
+        public async Task<IActionResult> PostPlant([FromBody] CreatePlantDto request)
         {
-            // group check
-            var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId);
-            if (!groupExists)
+            // GroupId is nullable so only validate if provided
+            if (request.GroupId.HasValue)
             {
-                return BadRequest(new { message = $"Group ID {request.GroupId} does not exist" });
+                var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId.Value);
+                if (!groupExists)
+                    return BadRequest(new { message = $"Group with ID {request.GroupId} does not exist." });
             }
 
             var plant = new Plant
@@ -98,15 +93,16 @@ namespace PlantMonitoringAPI.Controllers
                 Name = request.Name,
                 Description = request.Description,
                 GroupId = request.GroupId,
-                CreatedAt = DateTime.UtcNow 
+                MoistureThreshold = request.MoistureThreshold,
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Plants.Add(plant);
             await _context.SaveChangesAsync();
 
-            // output response DTO
-
-            var group = await _context.Groups.FindAsync(plant.GroupId);
+            var group = plant.GroupId.HasValue
+                ? await _context.Groups.FindAsync(plant.GroupId.Value)
+                : null;
 
             var responseDto = new PlantDto
             {
@@ -114,52 +110,51 @@ namespace PlantMonitoringAPI.Controllers
                 Name = plant.Name,
                 Description = plant.Description,
                 CreatedAt = plant.CreatedAt,
+                MoistureThreshold = plant.MoistureThreshold,
                 GroupName = group?.Name ?? "No Group"
             };
 
             return CreatedAtAction(nameof(GetPlant), new { id = plant.Id }, responseDto);
         }
 
+        // PUT: api/plants/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPlant(int id, [FromBody] UpdatePlantDto request)
         {
             if (id != request.Id)
-            {
-                return BadRequest("Mismatch in URL and body");
-            }
+                return BadRequest(new { message = "ID mismatch between URL and request body." });
 
             var plant = await _context.Plants.FindAsync(id);
-            if (plant == null) {
-                return NotFound($"Plant with ID {id} not found");
-            }
+            if (plant == null)
+                return NotFound(new { message = $"Plant with ID {id} not found." });
 
-            var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId);
-            if (!groupExists)
+            // Only validate group if one is being assigned
+            if (request.GroupId.HasValue)
             {
-                return BadRequest("Group does not exist");
+                var groupExists = await _context.Groups.AnyAsync(g => g.Id == request.GroupId.Value);
+                if (!groupExists)
+                    return BadRequest(new { message = $"Group with ID {request.GroupId} does not exist." });
             }
 
             plant.Name = request.Name;
             plant.Description = request.Description;
             plant.GroupId = request.GroupId;
+            plant.MoistureThreshold = request.MoistureThreshold;
 
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+        // DELETE: api/plants/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePlant(int id)
         {
             var plant = await _context.Plants.FindAsync(id);
-
             if (plant == null)
-            {
-                return NotFound(new { message = $"Plant with ID {id} not found" });
-            }
+                return NotFound(new { message = $"Plant with ID {id} not found." });
 
             _context.Plants.Remove(plant);
-
             await _context.SaveChangesAsync();
 
             return NoContent();
