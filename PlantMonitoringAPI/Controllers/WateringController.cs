@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlantMonitoringAPI.Data;
+using PlantMonitoringAPI.Models;
 using PlantMonitoringAPI.Services;
 
 namespace PlantMonitoringAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WateringController : Controller
+    public class WateringController : ControllerBase
     {
         private readonly AppDbContext _context;
         private readonly MqttBackgroundService _mqttService;
+        private readonly IEventLogService _eventLogService;
         private readonly ILogger<WateringController> _logger;
 
         // Default duration if caller does not specify one
@@ -19,10 +21,11 @@ namespace PlantMonitoringAPI.Controllers
         // Pump running cap, also implemented in the ESP code
         private const int MAX_DURATION_SECONDS = 8;
 
-        public WateringController(AppDbContext context, MqttBackgroundService mqttService, ILogger<WateringController> logger)
+        public WateringController(AppDbContext context, MqttBackgroundService mqttService, IEventLogService eventLogService, ILogger<WateringController> logger)
         {
             _context = context;
             _mqttService = mqttService;
+            _eventLogService = eventLogService;
             _logger = logger;
         }
 
@@ -61,7 +64,7 @@ namespace PlantMonitoringAPI.Controllers
                     plantId, requestedDuration, duration);
             }
 
-            //  send MQTT command 
+            // MQTT command 
             var command = new
             {
                 action = "activate_pump",
@@ -81,6 +84,25 @@ namespace PlantMonitoringAPI.Controllers
                     message = "Could not reach the device. The broker may be offline or the device is disconnected."
                 });
             }
+
+            // log event with latest moisture reading for snapshot
+            var latestMoisture = await _context.SensorData
+                .Where(s => s.PlantId == plantId)
+                .OrderByDescending(s => s.MeasuredAt)
+                .Select(s => (double?)s.MoistureValue)
+                .FirstOrDefaultAsync();
+
+            // Fire and forget so log failure doesn't affect 200 response
+            _ = _eventLogService.LogAsync(
+                eventType: EventType.WateringManual,
+                triggeredBy: TriggeredBy.Manual,
+                plantId: plant.Id,
+                plantName: plant.Name,
+                deviceId: device.Id,
+                moistureAtTime: latestMoisture,
+                durationSeconds: duration,
+                notes: null
+             );
 
             _logger.LogInformation(
                 "Watering triggered for plant {PlantId} via device {DeviceId} for {Duration}s",

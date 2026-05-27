@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Device> Devices { get; set; }
     public DbSet<SensorData> SensorData { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<EventLog> EventLog { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
