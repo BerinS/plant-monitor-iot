@@ -14,7 +14,7 @@ builder.Services.Configure<HostOptions>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<TokenService>();
-
+builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.AddSingleton<MqttBackgroundService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<MqttBackgroundService>());
 
