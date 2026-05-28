@@ -1,6 +1,8 @@
-﻿using MQTTnet;
+﻿using Microsoft.EntityFrameworkCore;
+using MQTTnet;
 using MQTTnet.Client;
 using PlantMonitoringAPI.Data;
+using PlantMonitoringAPI.Models;
 using System.Text;
 using System.Text.Json;
 
@@ -11,10 +13,12 @@ namespace PlantMonitoringAPI.Services
         private readonly ILogger<MqttBackgroundService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
+        private readonly INotificationService _notificationService;
         private IMqttClient? _mqttClient;
 
-        // maps to the Value property on TelemetryPayload
-        // Created once and reused to avoid allocating on every message
+        // Used for debounce check and notification creation
+        private const string DRY_NOTIFICATION_TITLE = "Plant is dry";
+
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
@@ -23,11 +27,13 @@ namespace PlantMonitoringAPI.Services
         public MqttBackgroundService(
             ILogger<MqttBackgroundService> logger,
             IServiceScopeFactory scopeFactory,
-            IConfiguration config)
+            IConfiguration config,
+            INotificationService notificationService)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
             _config = config;
+            _notificationService = notificationService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -46,8 +52,6 @@ namespace PlantMonitoringAPI.Services
                 .WithCleanSession()
                 .Build();
 
-            // Fires when the connection to EMQX drops
-            // Waits 5 seconds then attempts to reconnect and resubscribe            
             _mqttClient.DisconnectedAsync += async e =>
             {
                 _logger.LogWarning("Disconnected from MQTT broker. Reconnecting in 5 seconds...");
@@ -68,20 +72,13 @@ namespace PlantMonitoringAPI.Services
                 }
             };
 
-            // Handler called sequentially by default, this could be a problem later but for now it's ok
             _mqttClient.ApplicationMessageReceivedAsync += HandleMessageAsync;
 
             await _mqttClient.ConnectAsync(options, stoppingToken);
-
-            // Wildcard + matches exactly one topic segment, devices/1/telemetry
             await _mqttClient.SubscribeAsync("devices/+/telemetry", cancellationToken: stoppingToken);
 
             _logger.LogInformation("MQTT background service connected and subscribed.");
 
-            // Keep the background service alive until the app shuts down
-            // The cancellation token is signalled on app shutdown,
-            // which causes this delay to throw OperationCanceledException
-            // and the service exits cleanly
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
 
@@ -105,7 +102,7 @@ namespace PlantMonitoringAPI.Services
             _logger.LogInformation("Telemetry from device {DeviceId}: {Payload}", deviceId, payload);
 
             try
-            {             
+            {
                 var data = JsonSerializer.Deserialize<TelemetryPayload>(payload, _jsonOptions);
                 if (data == null)
                 {
@@ -113,12 +110,14 @@ namespace PlantMonitoringAPI.Services
                     return;
                 }
 
-                // AppDbContext is scoped and cannot be injected directly into a singleton
-                // A new scope is created per message so each DB operation gets its own context instance that is disposed after the save
                 using var scope = _scopeFactory.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                var device = await context.Devices.FindAsync(deviceId);
+                // Plant included so MoistureThreshold is available for the ryness check 
+                var device = await context.Devices
+                    .Include(d => d.Plant)
+                    .FirstOrDefaultAsync(d => d.Id == deviceId);
+
                 if (device == null)
                 {
                     _logger.LogWarning("Telemetry received for unknown device {DeviceId}", deviceId);
@@ -131,7 +130,7 @@ namespace PlantMonitoringAPI.Services
                     return;
                 }
 
-                var dataPoint = new Models.SensorData
+                var dataPoint = new SensorData
                 {
                     PlantId = device.CurrentPlantId.Value,
                     MoistureValue = data.Value,
@@ -142,6 +141,10 @@ namespace PlantMonitoringAPI.Services
                 await context.SaveChangesAsync();
 
                 _logger.LogInformation("Saved reading {Value}% for plant {PlantId}", data.Value, device.CurrentPlantId);
+
+                // Dryness check runs after the reading is saved, plant is already loaded via Include 
+                if (device.Plant != null)
+                    await CheckDrynessAsync(device.Plant, data.Value);
             }
             catch (Exception ex)
             {
@@ -149,8 +152,52 @@ namespace PlantMonitoringAPI.Services
             }
         }
 
+        private async Task CheckDrynessAsync(Plant plant, double moisture)
+        {
+            try
+            {
+                // threshold ccheck                
+                if (plant.MoistureThreshold == null)
+                    return;
 
-        // Called from anywhere to push a command to a device, returns true if the broker accepted the message, false otherwise
+                // in-memory comparison
+                if (moisture >= plant.MoistureThreshold.Value)
+                    return;
+
+                // debounce prevents a new notification on every reading
+                // When notification is read, the next dry reading will create a notification
+                var alreadyNotified = await _notificationService
+                    .UnreadExistsAsync(plant.Id, DRY_NOTIFICATION_TITLE);
+
+                if (alreadyNotified)
+                {
+                    _logger.LogInformation(
+                        "Plant {PlantId} is dry but unread notification already exists — skipping",
+                        plant.Id);
+                    return;
+                }
+
+                var message =
+                    $"{plant.Name} moisture is at {moisture:F0}% — " +
+                    $"below the threshold of {plant.MoistureThreshold.Value}%.";
+
+                await _notificationService.CreateAsync(
+                    title: DRY_NOTIFICATION_TITLE,
+                    message: message,
+                    severity: NotificationSeverity.Warning,
+                    plantId: plant.Id,
+                    plantName: plant.Name);
+
+                _logger.LogInformation(
+                    "Dry notification created for plant {PlantId} at {Moisture}%",
+                    plant.Id, moisture);
+            }
+            catch (Exception ex)
+            {                
+                _logger.LogError(ex, "Dryness check failed for plant {PlantId}", plant.Id);
+            }
+        }
+
         public async Task<bool> SendCommandAsync(int deviceId, object command)
         {
             if (_mqttClient == null || !_mqttClient.IsConnected)
