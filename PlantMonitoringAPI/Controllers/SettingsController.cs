@@ -96,8 +96,7 @@ namespace PlantMonitoringAPI.Controllers
 
         // PUT: api/settings used by the settings page form.
         [HttpPut]
-        public async Task<IActionResult> UpdateSettingsBulk(
-            [FromBody] UpdateSettingsBulkDto request)
+        public async Task<IActionResult> UpdateSettingsBulk([FromBody] UpdateSettingsBulkDto request)
         {
             if (request.Settings == null || !request.Settings.Any())
                 return BadRequest(new { message = "No settings provided." });

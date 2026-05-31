@@ -21,6 +21,9 @@ builder.Services.AddSingleton<MqttBackgroundService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<MqttBackgroundService>());
 
 
+builder.Services.AddHostedService<EmailBackgroundService>();
+
+
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
