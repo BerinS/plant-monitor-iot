@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<SensorData> SensorData { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<EventLog> EventLog { get; set; }
+    public DbSet<SystemSetting> SystemSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
