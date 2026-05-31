@@ -14,10 +14,12 @@ builder.Services.Configure<HostOptions>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.AddSingleton<IEventLogService, EventLogService>();
 builder.Services.AddSingleton<MqttBackgroundService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<MqttBackgroundService>());
+
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
