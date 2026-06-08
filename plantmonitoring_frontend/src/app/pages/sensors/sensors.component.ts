@@ -1,11 +1,14 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { LucideAngularModule, Plus } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
 
 import { ModalComponent } from '../../components/modal/modal.component';
 import { SensorCardSensors } from '../../components/sensor-card-sensors/sensor-card-sensors.component';
 import { SensorService } from '../../services/sensor.service';
+import { PlantService } from '../../services/plant.service';
+import { GroupService } from '../../services/group.service';
 import { Sensor } from '../../models/sensor.model';
 import { SensorHealth } from '../../models/dashboard.model';
 
@@ -19,7 +22,12 @@ import { SensorHealth } from '../../models/dashboard.model';
 export class SensorsComponent {
   readonly Plus = Plus;
   private sensorService = inject(SensorService);
+  private plantService = inject(PlantService);
+  private groupService = inject(GroupService);
   private toastr = inject(ToastrService);
+
+  plants = toSignal(this.plantService.getPlants(), { initialValue: [] });
+  groups = toSignal(this.groupService.getGroups(), { initialValue: [] });
 
   isModalOpen = signal(false);
   activeSensor = signal<Sensor | null>(null);
@@ -34,13 +42,12 @@ export class SensorsComponent {
       this.sensors.set(data);
     });
 
-    // used only to derive each card's online/offline/idle status (same rule as the health widget)
+    // used for online/offline/idle status 
     this.sensorService.getSensorHealth().subscribe(data => {
       this.sensorHealth.set(data);
     });
   }
 
-  // mirrors the status logic in health-widget.component.ts: no contact ever -> idle,
   // contact within the last hour -> online, otherwise offline
   statusById = computed(() => {
     const now = new Date().getTime();
@@ -60,7 +67,6 @@ export class SensorsComponent {
   });
 
   sortedSensors = computed(() => {
-    // [...this.sensors()] creates a copy
     const currentSensors = [...this.sensors()]; 
 
     switch (this.sortMode()) {
@@ -77,8 +83,8 @@ export class SensorsComponent {
 
   handleEdit(sensor: Sensor) {
     this.activeSensor.set({ ...sensor });
-    this.modalType.set('info'); // visual style
-    this.modalMode.set('edit'); // logic mode
+    this.modalType.set('info');
+    this.modalMode.set('edit'); 
     this.isModalOpen.set(true);
   }
 

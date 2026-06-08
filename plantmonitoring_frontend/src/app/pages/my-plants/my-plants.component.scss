@@ -216,6 +216,7 @@ button.sort .icon{
   }
 
   input[type="text"],
+  input[type="number"],
   textarea,
   select {
     box-sizing: border-box;
@@ -240,8 +241,29 @@ button.sort .icon{
   }
 
   textarea {
-    resize: vertical; 
+    resize: vertical;
     min-height: 80px;
+  }
+
+  // hide number spinner arrows — the field looks cleaner as plain text input
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+// places two form-groups side by side (used for Group + Threshold)
+.form-row {
+  display: flex;
+  gap: 1rem;
+
+  > .form-group {
+    flex: 1;
   }
 }
 

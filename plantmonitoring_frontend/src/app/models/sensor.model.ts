@@ -6,5 +6,6 @@ export interface Sensor {
   currentPlantId: number | null;
   plantName: string | null;
   groupId: number | null;
+  groupName: string | null;
   description: string | null;
 }
