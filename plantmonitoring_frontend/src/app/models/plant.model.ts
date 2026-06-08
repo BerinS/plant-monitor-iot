@@ -5,6 +5,7 @@ export interface Plant {
   createdAt: string;
   groupName: string;
   sensorName: string;
+  moistureThreshold: number | null;
   currentMoisture: number;
   lastUpdate: string;
 }

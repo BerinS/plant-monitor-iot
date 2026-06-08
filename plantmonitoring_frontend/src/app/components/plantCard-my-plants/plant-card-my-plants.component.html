@@ -1,7 +1,8 @@
-<div class="plant-card">
-  <div class="header">        
-    <div>
-      <h3>{{ plant().name }}</h3> 
+<div class="plant-card" [class.low]="isLow()">
+  <div class="header">
+    <div class="title-group">
+      <lucide-icon [img]="DropIcon" size="16" class="drop-icon" [class.low]="isLow()"></lucide-icon>
+      <h3>{{ plant().name }}</h3>
     </div>
     <div class="corner-icon">      
       <span class="pen" (click)="onEdit()">
@@ -18,36 +19,46 @@
       <div class="description">
         <p>{{ plant().description }}</p> 
       </div>   
-      <div class="footer">
-        <div class="info-row">
-          <div class="plant-info"><b>GROUP:</b></div>   
-          <div class="plant-info">{{ plant().groupName}}</div>   
+      <div class="footer info-grid">
+        <div class="info-item">
+          <span class="label">Group</span>
+          <span class="value">{{ plant().groupName || 'Not assigned' }}</span>
         </div>
-        <div class="info-row">
-          <div class="plant-info"><b>SENSOR:</b></div>  
-          <div class="plant-info">{{ plant().sensorName}}</div>  
+        <div class="info-item">
+          <span class="label">Sensor</span>
+          <span class="value">{{ plant().sensorName || 'Not assigned' }}</span>
         </div>
-        <div class="info-row">
-          <div class="plant-info"><b>UPDATED:</b></div>
-          <div class="plant-info">{{ plant().lastUpdate | date:'HH:mm | dd/MM/yyyy' }}</div>
+        <div class="info-item">
+          <span class="label">Threshold</span>
+          @if (plant().moistureThreshold != null) {
+            <span class="value">{{ plant().moistureThreshold }}%</span>
+          } @else {
+            <span class="value muted">No threshold set</span>
+          }
         </div>
-        <div class="info-row">
-          <div class="plant-info"><b>CREATED AT:</b></div>  
-          <div class="plant-info">{{ plant().createdAt | date:'HH:mm | dd/MM/yyyy' }}</div>  
+        <div class="info-item">
+          <span class="label">Updated</span>
+          <span class="value">{{ plant().lastUpdate | date:'HH:mm | dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Created</span>
+          <span class="value">{{ plant().createdAt | date:'HH:mm | dd/MM/yyyy' }}</span>
         </div>
       </div>
     </div>
 
    <div class="item2 stats">
       <div class="gauge-retina-wrapper">
-        <ngx-gauge 
-          [type]="'arch'" 
-          [value]="plant().currentMoisture" 
-          [thick]="22" 
+        <ngx-gauge
+          [type]="'arch'"
+          [value]="plant().currentMoisture"
+          [thick]="22"
           [size]="340"
           [foregroundColor]="isLow() ? '#ca1b18' : '#1e8e3e'"
           [cap]="'butt'"
-          [duration]="400">
+          [duration]="400"
+          [append]="'%'"
+          [label]="'Moisture'">
         </ngx-gauge>
       </div>
     </div>

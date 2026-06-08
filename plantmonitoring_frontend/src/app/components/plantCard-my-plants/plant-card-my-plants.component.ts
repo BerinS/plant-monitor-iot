@@ -15,8 +15,13 @@ export class PlantCardMyPlants {
   readonly PenIcon = Pen;
   readonly TrashIcon = Trash2;
 
-  plant = input.required<Plant>(); 
-  isLow = computed(() => this.plant().currentMoisture < 30);
+  plant = input.required<Plant>();
+
+  // "low" is driven by the plant's own DB threshold (null = no check configured, so never flagged)
+  isLow = computed(() => {
+    const { currentMoisture, moistureThreshold } = this.plant();
+    return currentMoisture != null && moistureThreshold != null && currentMoisture < moistureThreshold;
+  });
   editRequest = output<Plant>();
   deleteRequest = output<Plant>();
 

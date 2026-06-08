@@ -1,5 +1,5 @@
 dialog {
-  // --- animation Setup ---
+  // animation
   transition: opacity 0.2s ease, transform 0.2s ease, overlay 0.2s allow-discrete;
   opacity: 0;
   transform: translateY(30px);
@@ -54,7 +54,10 @@ dialog {
   justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid #eee;
-  h2 { margin: 0; font-size: 1.25rem; }
+  h2 { margin: 0; 
+    font-size: 1.25rem; 
+    font-weight: 500;
+  }
 }
 
 .modal-body {
@@ -66,5 +69,9 @@ dialog {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #707070;
 }
 
