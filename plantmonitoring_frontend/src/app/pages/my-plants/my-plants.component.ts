@@ -63,11 +63,12 @@ export class MyPlantsComponent {
   handleAdd() {
     // dummy plant to populate form
     this.activePlant.set({
-      id: 0, 
+      id: 0,
       name: '',
       description: '',
       createdAt: new Date().toISOString(),
       groupName: 'General',
+      moistureThreshold: null,
       currentMoisture: 0,
       sensorName: 'No Sensor Assigned',
       lastUpdate: ''
@@ -105,7 +106,8 @@ export class MyPlantsComponent {
         id: updatedPlant.id,
         name: updatedPlant.name,
         description: updatedPlant.description,
-        groupId: groupIdToSave
+        groupId: groupIdToSave,
+        moistureThreshold: updatedPlant.moistureThreshold
       };
 
       console.log('Sending payload to backend:', payload);
@@ -173,7 +175,8 @@ export class MyPlantsComponent {
       const payload = {
         name: newPlant.name,
         description: newPlant.description,
-        groupId: groupIdToSave
+        groupId: groupIdToSave,
+        moistureThreshold: newPlant.moistureThreshold
       };
 
       this.plantService.addPlant(payload).subscribe({

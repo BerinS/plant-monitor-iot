@@ -48,13 +48,23 @@
           </div>
 
           <div class="form-group">
-            <label for="currentPlantId">Plant ID</label>
-            <input type="number" id="currentPlantId" name="currentPlantId" [(ngModel)]="sensor.currentPlantId" placeholder="e.g., 1">
+            <label for="currentPlantId">Plant</label>
+            <select id="currentPlantId" name="currentPlantId" [(ngModel)]="sensor.currentPlantId">
+              <option [ngValue]="null">— Not assigned —</option>
+              @for (plant of plants(); track plant.id) {
+                <option [ngValue]="plant.id">{{ plant.name }} (ID: {{ plant.id }})</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="groupId">Group ID</label>
-            <input type="number" id="groupId" name="groupId" [(ngModel)]="sensor.groupId" placeholder="e.g., 1">
+            <label for="groupId">Group</label>
+            <select id="groupId" name="groupId" [(ngModel)]="sensor.groupId">
+              <option [ngValue]="null">— Not assigned —</option>
+              @for (group of groups(); track group.id) {
+                <option [ngValue]="group.id">{{ group.name }}</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">
@@ -82,13 +92,23 @@
           </div>
 
           <div class="form-group">
-            <label for="addCurrentPlantId">Plant ID</label>
-            <input type="number" id="addCurrentPlantId" name="currentPlantId" [(ngModel)]="sensor.currentPlantId" placeholder="e.g., 1">
+            <label for="addCurrentPlantId">Plant</label>
+            <select id="addCurrentPlantId" name="currentPlantId" [(ngModel)]="sensor.currentPlantId">
+              <option [ngValue]="null">— Not assigned —</option>
+              @for (plant of plants(); track plant.id) {
+                <option [ngValue]="plant.id">{{ plant.name }} (ID: {{ plant.id }})</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="addGroupId">Group ID</label>
-            <input type="number" id="addGroupId" name="groupId" [(ngModel)]="sensor.groupId" placeholder="e.g., 1">
+            <label for="addGroupId">Group</label>
+            <select id="addGroupId" name="groupId" [(ngModel)]="sensor.groupId">
+              <option [ngValue]="null">— Not assigned —</option>
+              @for (group of groups(); track group.id) {
+                <option [ngValue]="group.id">{{ group.name }}</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">

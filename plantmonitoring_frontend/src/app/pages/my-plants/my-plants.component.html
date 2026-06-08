@@ -39,18 +39,23 @@
           
           <div class="form-group">
             <label for="plantName">Plant Name <span class="required">*</span></label>
-            <input type="text" id="plantName" name="name" [(ngModel)]="plant.name" required placeholder="e.g., Office Fern">
+            <input type="text" id="plantName" name="name" [(ngModel)]="plant.name" required placeholder="Office Fern">
           </div>
 
-          <div class="form-group">
-            <label for="plantGroup">Group <span class="required">*</span></label>
-            <select id="plantGroup" name="groupName" [(ngModel)]="plant.groupName" required>
-              
-              @for (group of groups(); track group.id) {
-                <option [value]="group.name">{{ group.name }}</option>
-              }
-              
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="plantGroup">Group <span class="required">*</span></label>
+              <select id="plantGroup" name="groupName" [(ngModel)]="plant.groupName" required>
+                @for (group of groups(); track group.id) {
+                  <option [value]="group.name">{{ group.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="plantThreshold">Threshold (%)</label>
+              <input type="number" id="plantThreshold" name="moistureThreshold" [(ngModel)]="plant.moistureThreshold" min="0" max="100" placeholder="e.g., 40">
+            </div>
           </div>
 
           <div class="form-group">
@@ -69,18 +74,23 @@
           
           <div class="form-group">
             <label for="addPlantName">Plant Name <span class="required">*</span></label>
-            <input type="text" id="addPlantName" name="name" [(ngModel)]="plant.name" required placeholder="e.g., Office Fern">
+            <input type="text" id="addPlantName" name="name" [(ngModel)]="plant.name" required placeholder="Office Fern">
           </div>
 
-          <div class="form-group">
-            <label for="addPlantGroup">Group <span class="required">*</span></label>
-            <select id="plantGroup" name="groupName" [(ngModel)]="plant.groupName" required>
-              
-              @for (group of groups(); track group.id) {
-                <option [value]="group.name">{{ group.name }}</option>
-              }
-              
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="addPlantGroup">Group <span class="required">*</span></label>
+              <select id="addPlantGroup" name="groupName" [(ngModel)]="plant.groupName" required>
+                @for (group of groups(); track group.id) {
+                  <option [value]="group.name">{{ group.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="addPlantThreshold">Threshold (%)</label>
+              <input type="number" id="addPlantThreshold" name="moistureThreshold" [(ngModel)]="plant.moistureThreshold" min="0" max="100" placeholder="e.g., 40">
+            </div>
           </div>
 
           <div class="form-group">

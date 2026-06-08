@@ -24,7 +24,7 @@
       <div class="info-item">
         <span class="label">Group</span>
         @if (sensor().groupId) {
-          <span class="value">#{{ sensor().groupId }}</span>
+          <span class="value">#{{ sensor().groupId }} | {{ sensor().groupName || 'Unnamed group' }}</span>
         } @else {
           <span class="value muted">Not assigned</span>
         }
@@ -32,7 +32,7 @@
       <div class="info-item">
         <span class="label">Plant</span>
         @if (sensor().currentPlantId) {
-          <span class="value link">#{{ sensor().currentPlantId }} &mdash; {{ sensor().plantName || 'Unnamed plant' }}</span>
+          <span class="value link">#{{ sensor().currentPlantId }} | {{ sensor().plantName || 'Unnamed plant' }}</span>
         } @else {
           <span class="value muted">Not assigned</span>
         }

@@ -35,6 +35,7 @@ namespace PlantMonitoringAPI.Models
 
         [Column("group_id")]
         public int? GroupId { get; set; }
+        public Group? Group { get; set; }
 
         [MaxLength(500)]
         [Column("description")]

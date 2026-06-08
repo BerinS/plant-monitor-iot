@@ -109,6 +109,7 @@ namespace PlantMonitoringAPI.Controllers
                     CurrentPlantId = d.CurrentPlantId,
                     PlantName = d.Plant != null ? d.Plant.Name : null,
                     GroupId = d.GroupId,
+                    GroupName = d.Group != null ? d.Group.Name : null,
                     Description = d.Description
                 })
                 .ToListAsync();
