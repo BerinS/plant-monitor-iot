@@ -15,11 +15,12 @@ import {  Plant } from '../../models/plant.model';
 import { HealthWidgetComponent } from '../../components/health-widget/health-widget.component';
 import { PlantCardDashComponent } from '../../components/plantCardDash/plant-card-dash.component';
 import { HistoryChartComponent } from '../../components/history-chart/history-chart.component';
+import { RecentAlertsComponent } from '../../components/recent-alerts/recent-alerts.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, PlantCardDashComponent, HistoryChartComponent, LucideAngularModule, FormsModule, HealthWidgetComponent],
+  imports: [CommonModule, PlantCardDashComponent, HistoryChartComponent, LucideAngularModule, FormsModule, HealthWidgetComponent, RecentAlertsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

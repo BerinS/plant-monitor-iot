@@ -16,8 +16,9 @@
 <div class="sensors-wrapper">  
   @for (s of sortedSensors(); track s.id) {
     <div class="widget-card">
-      <app-sensor-card-sensors 
-        [sensor]="s" 
+      <app-sensor-card-sensors
+        [sensor]="s"
+        [status]="statusById().get(s.id) ?? 'idle'"
         (editRequest)="handleEdit($event)"
         (deleteRequest)="handleDelete($event)">
       </app-sensor-card-sensors>

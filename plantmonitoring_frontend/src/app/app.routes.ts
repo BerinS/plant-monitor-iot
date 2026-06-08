@@ -3,6 +3,7 @@ import { MainLayoutComponent } from './main-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MyPlantsComponent } from './pages/my-plants/my-plants.component';
 import { SensorsComponent } from './pages/sensors/sensors.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
 
 export const routes: Routes = [
   {
@@ -24,8 +25,13 @@ export const routes: Routes = [
       },
       {
         path: 'sensors',
-        component: SensorsComponent      }
-      
+        component: SensorsComponent
+      },
+      {
+        path: 'notifications',
+        component: NotificationsComponent
+      }
+
     ]
   }
 ];

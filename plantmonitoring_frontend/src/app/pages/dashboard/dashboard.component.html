@@ -55,13 +55,17 @@
               }
           }   
 
-          @if (widget.id === 'health') {   
+          @if (widget.id === 'health') {
             @if(widget.data){
               <app-health-widget
                 [sensors]="widget.data">
               </app-health-widget>
-            }             
-          }        
+            }
+          }
+
+          @if (widget.id === 'alerts') {
+            <app-recent-alerts></app-recent-alerts>
+          }
 
           
 
