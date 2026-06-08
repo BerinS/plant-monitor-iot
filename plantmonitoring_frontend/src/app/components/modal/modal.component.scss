@@ -9,8 +9,7 @@ dialog {
     transform: translateY(0) scale(1);
     
     &::backdrop {
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.418);
       transition: background 0.2s ease, backdrop-filter 0.2s ease;
     }
   }

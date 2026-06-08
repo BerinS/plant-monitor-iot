@@ -7,6 +7,7 @@
         public string Name { get; set; } = string.Empty;
         public string? MacAddress { get; set; }
         public int? CurrentPlantId { get; set; }
+        public string? PlantName { get; set; }
         public int? GroupId { get; set; }
         public string? Description { get; set; }
     }

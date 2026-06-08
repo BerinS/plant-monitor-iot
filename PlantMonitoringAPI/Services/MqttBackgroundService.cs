@@ -184,7 +184,7 @@ namespace PlantMonitoringAPI.Services
                 await _notificationService.CreateAsync(
                     title: DRY_NOTIFICATION_TITLE,
                     message: message,
-                    severity: NotificationSeverity.Warning,
+                    severity: DetermineDrynessSeverity(moisture, plant.MoistureThreshold.Value),
                     plantId: plant.Id,
                     plantName: plant.Name);
 
@@ -193,9 +193,19 @@ namespace PlantMonitoringAPI.Services
                     plant.Id, moisture);
             }
             catch (Exception ex)
-            {                
+            {
                 _logger.LogError(ex, "Dryness check failed for plant {PlantId}", plant.Id);
             }
+        }
+
+        // Below half the threshold counts as critical; anything else under the threshold is a warning
+        private static string DetermineDrynessSeverity(double moisture, double threshold)
+        {
+            var criticalThreshold = threshold / 2;
+
+            return moisture <= criticalThreshold
+                ? NotificationSeverity.Critical
+                : NotificationSeverity.Warning;
         }
 
         public async Task<bool> SendCommandAsync(int deviceId, object command)

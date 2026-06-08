@@ -38,7 +38,7 @@ namespace PlantMonitoringAPI.Controllers
             _logger = logger;
         }
 
-        // GET: api/settings
+        // GET: api/settings        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SettingDto>>> GetAll()
         {
@@ -75,6 +75,21 @@ namespace PlantMonitoringAPI.Controllers
         }
 
         // PUT: api/settings/{key}
+        // Example body:
+        /*
+            {
+              "settings": {
+                "mail_enabled": "true",
+                "mail_host": "smtp.resend.com",
+                "mail_port": "465",
+                "mail_username": "resend",
+                "mail_password": "your-resend-api-key",
+                "mail_from_address": "you@yourdomain.com",
+                "mail_from_name": "Plant Monitor",
+                "mail_to_address": "berin.surkovic@gmail.com"
+              }
+            }
+         */
         [HttpPut("{key}")]
         public async Task<IActionResult> UpdateSetting(
             string key,

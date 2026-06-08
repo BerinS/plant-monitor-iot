@@ -7,6 +7,7 @@ import { ModalComponent } from '../../components/modal/modal.component';
 import { SensorCardSensors } from '../../components/sensor-card-sensors/sensor-card-sensors.component';
 import { SensorService } from '../../services/sensor.service';
 import { Sensor } from '../../models/sensor.model';
+import { SensorHealth } from '../../models/dashboard.model';
 
 @Component({
   selector: 'app-sensors',
@@ -24,14 +25,39 @@ export class SensorsComponent {
   activeSensor = signal<Sensor | null>(null);
   modalType = signal<'default' | 'danger' | 'info'>('default');
   modalMode = signal<'edit' | 'delete' | 'add' | 'default'>('default');
-  sensors = signal<Sensor[]>([]); 
+  sensors = signal<Sensor[]>([]);
+  sensorHealth = signal<SensorHealth[]>([]);
   sortMode = signal<'newest' | 'oldest' | 'name'>('newest');
 
   constructor() {
     this.sensorService.getAllSensors().subscribe(data => {
       this.sensors.set(data);
     });
+
+    // used only to derive each card's online/offline/idle status (same rule as the health widget)
+    this.sensorService.getSensorHealth().subscribe(data => {
+      this.sensorHealth.set(data);
+    });
   }
+
+  // mirrors the status logic in health-widget.component.ts: no contact ever -> idle,
+  // contact within the last hour -> online, otherwise offline
+  statusById = computed(() => {
+    const now = new Date().getTime();
+    const TIMEOUT_MS = 1000 * 60 * 60; // 1 hour timeout
+    const map = new Map<number, 'online' | 'offline' | 'idle'>();
+
+    for (const h of this.sensorHealth()) {
+      if (h.lastContact == null) {
+        map.set(h.id, 'idle');
+      } else {
+        const lastContactTime = new Date(h.lastContact).getTime();
+        map.set(h.id, (now - lastContactTime) < TIMEOUT_MS ? 'online' : 'offline');
+      }
+    }
+
+    return map;
+  });
 
   sortedSensors = computed(() => {
     // [...this.sensors()] creates a copy
@@ -65,6 +91,7 @@ export class SensorsComponent {
       description: '',
       apiToken: '',
       currentPlantId: null,
+      plantName: null,
       groupId: null
     } as Sensor);
     

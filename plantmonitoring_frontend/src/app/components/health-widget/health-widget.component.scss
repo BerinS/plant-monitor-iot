@@ -8,6 +8,7 @@ $mobile-break: 768px;
   background-color: rgb(255, 255, 255);
   --offline-color: #cc4442;
   --online-color: #12a35f;
+  --idle-color: #aaaaaa;
 }
 
 .health-container {
@@ -56,12 +57,19 @@ $mobile-break: 768px;
 }
 
 .node-grid {
-  flex: 1; // fill remaining height
-  overflow-y: auto; // scroll if needed
+  // exactly 2 columns — additional sensors stack into new rows
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+  grid-template-columns: repeat(2, 1fr);
   gap: 17px;
+
+  // fits 2 rows comfortably; beyond that (>4 sensors) it scrolls internally
+  max-height: calc(2 * 6.5rem + 17px);
+  overflow-y: auto;
   padding-right: 4px;
+
+  @media (max-width: $mobile-break) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .node-card {
@@ -72,18 +80,30 @@ $mobile-break: 768px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 70px; 
+  min-height: 70px;
   transition: ease-in-out 0.1s;
 
   &:hover { border-color: #bbb; }
 
   &.offline {
-    border-left: 3px solid var(--offline-color); 
+    border-left: 3px solid var(--offline-color);
   }
-  
+
   &.online {
-    border-left: 3px solid var(--online-color); 
+    border-left: 3px solid var(--online-color);
   }
+
+  &.idle {
+    border-left: 3px solid var(--idle-color);
+  }
+}
+
+.device-name {
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .badge{
@@ -94,18 +114,20 @@ $mobile-break: 768px;
   font-size: 0.8rem;
   font-weight: 600;
   color: #888;
-  &.red {
-    .circle{
-      color: var(--offline-color);
-      padding-top: 4px;
-    }
+
+  &.status-online .circle {
+    color: var(--online-color);
+    padding-top: 4px;
   }
-  
-  &.green {
-    .circle{
-      color: var(--online-color);
-      padding-top: 4px;
-    }
+
+  &.status-offline .circle {
+    color: var(--offline-color);
+    padding-top: 4px;
+  }
+
+  &.status-idle .circle {
+    color: var(--idle-color);
+    padding-top: 4px;
   }
 }
 

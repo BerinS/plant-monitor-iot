@@ -14,6 +14,7 @@ export class SensorCardSensors {
   readonly CircleDot = CircleDot;
 
   sensor = input.required<Sensor>();
+  status = input<'online' | 'offline' | 'idle'>('idle');
   editRequest = output<Sensor>();
   deleteRequest = output<Sensor>();
 

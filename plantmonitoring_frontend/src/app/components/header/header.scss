@@ -61,11 +61,29 @@ header {
 }
 
 .notification-wrapper {
+  position: relative;
+  display: inline-flex;
   color: #888;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   padding-right: 10px;
   padding-left: 10px;
   padding-top: 3px;
+}
+
+.unread-badge {
+  position: absolute;
+  top: 0;
+  right: 6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background-color: #cc4442;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
 }
 
 @media (max-width: $mobile-break) {

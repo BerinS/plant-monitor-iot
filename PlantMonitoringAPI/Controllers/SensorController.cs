@@ -107,6 +107,7 @@ namespace PlantMonitoringAPI.Controllers
                     Name = d.Name,
                     MacAddress = d.MacAddress,
                     CurrentPlantId = d.CurrentPlantId,
+                    PlantName = d.Plant != null ? d.Plant.Name : null,
                     GroupId = d.GroupId,
                     Description = d.Description
                 })
@@ -170,6 +171,7 @@ namespace PlantMonitoringAPI.Controllers
                 .Select(d => new DeviceHealthDto
                 {
                     Id = d.Id,
+                    Name = d.Name,
                     MacAddress = d.MacAddress,
 
                     AssignedPlant = d.Plant != null ? d.Plant.Name : "Idle",

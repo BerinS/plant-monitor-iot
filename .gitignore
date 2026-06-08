@@ -3,8 +3,10 @@ plantmonitoring_esp32_old-http/
 plantmonitoring_esp32_mqtt/
 
 Pump test/
-
+3D Models/
 .env
+
+.claude/
 
 # Ignore database data
 postgres-data/

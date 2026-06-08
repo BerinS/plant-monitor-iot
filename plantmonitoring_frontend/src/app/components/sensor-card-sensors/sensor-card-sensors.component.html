@@ -1,7 +1,7 @@
 <div class="sensor-card">
   <div class="sensor-header" style="justify-content: space-between;">
     <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <lucide-icon [img]="CircleDot" size="12" class="ok"></lucide-icon>
+      <lucide-icon [img]="CircleDot" size="12" [class]="'status-dot status-' + status()" [attr.title]="status()"></lucide-icon>
       <h3>{{ sensor().name || 'Unnamed Sensor' }}</h3>
     </div>
     
@@ -19,28 +19,29 @@
     <div class="info-grid">
       <div class="info-item">
         <span class="label">MAC Address</span>
-        <span class="value">{{ sensor().macAddress }}</span>
+        <span class="value">{{ sensor().macAddress || 'Not assigned' }}</span>
       </div>
       <div class="info-item">
-        <span class="label">Group ID</span>
-        <span class="value">{{ sensor().groupId }}</span>
+        <span class="label">Group</span>
+        @if (sensor().groupId) {
+          <span class="value">#{{ sensor().groupId }}</span>
+        } @else {
+          <span class="value muted">Not assigned</span>
+        }
       </div>
       <div class="info-item">
-        <span class="label">Plant ID</span>
-        <span class="value link">{{ sensor().currentPlantId }}</span>
+        <span class="label">Plant</span>
+        @if (sensor().currentPlantId) {
+          <span class="value link">#{{ sensor().currentPlantId }} &mdash; {{ sensor().plantName || 'Unnamed plant' }}</span>
+        } @else {
+          <span class="value muted">Not assigned</span>
+        }
       </div>
     </div>
 
     <div class="description-section">
       <span class="label">Description</span>
-      <p class="desc-text">{{ sensor().description }}</p>
-    </div>
-
-    <div class="token-wrapper">
-      <span class="label">API Token</span>
-      <div class="token-code">
-        <code>{{ sensor().apiToken }}</code>
-      </div>
+      <p class="desc-text">{{ sensor().description || 'No description provided' }}</p>
     </div>
   </div>
 </div>

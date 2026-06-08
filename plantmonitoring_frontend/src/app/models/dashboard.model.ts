@@ -9,7 +9,8 @@ export interface DashboardWidget {
 
 export interface SensorHealth {
   id: number;
+  name: string;
   macAddress: string;
-  assignedPlant: string; 
-  lastContact: string;  
+  assignedPlant: string;
+  lastContact: string | null;
 }
