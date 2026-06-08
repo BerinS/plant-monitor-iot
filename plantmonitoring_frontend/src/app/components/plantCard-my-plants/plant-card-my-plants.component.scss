@@ -1,20 +1,50 @@
 $mobile-break: 768px;
 
 :host {
-  display: block;      
-  height: 100%;       
-  width: 100%;     
+  display: block;
+  height: 100%;
+  width: 100%;
+  --ok-color: #1e8e3e;
+  --low-color: #ca1b18;
 }
 
-.plant-card { 
-  height: 100%; 
-  display: flex; 
-  flex-direction: column; 
+.plant-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.1s ease-in-out;  
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drop-icon {
+  color: var(--ok-color);
+
+  &.low {
+    color: var(--low-color);
+    animation: breathe-glow 2s ease-in-out infinite;
+  }
+}
+
+@keyframes breathe-glow {
+  0% {
+    filter: drop-shadow(0 0 1px rgba(255, 51, 51, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(255, 51, 51, 1));
+  }
+  100% {
+    filter: drop-shadow(0 0 1px rgba(255, 51, 51, 0.4));
+  }
 }
 
 .wrapper {
   display: flex;
-  gap: 4rem;  
+  gap: 2rem;
   padding-top: 1rem;
 }
 
@@ -66,11 +96,9 @@ $mobile-break: 768px;
   align-items: center;
   justify-content: center;
   margin-bottom: 45px;
-  padding-right: 3rem;  
 
   @media (max-width: $mobile-break) {
     margin-bottom: 10px;
-    padding-right: 0;
     padding: 0;
     width: 100%;
   }
@@ -86,22 +114,41 @@ $mobile-break: 768px;
   padding-top: 10px;
 }
 
-.footer {   
-  font-size: 0.9rem; 
-  color: #888; 
-  letter-spacing: 0.5px; 
+.footer {
   padding-top: 15px;
+  margin-top: 15px;
   border-top: 1px solid #eee;
 }
 
-.plant-info{
-  padding-top: 2px;
-  padding-bottom: 2px;  
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
 }
 
-.info-row {
+.info-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.03em;
+}
+
+.value {
+  font-size: 0.9rem;
+  color: #333;
+
+  &.muted {
+    color: #999;
+    font-style: italic;
+    font-weight: 400;
+  }
 }
 
 .description { 
@@ -126,13 +173,13 @@ h3 {
   margin-bottom: 0;
 }
 
-// To prevent pixellation on high-DPI screens - scale gauge down and wrap it in a container that maintains the original size
+// To prevent pixellation on high-DPI screens, gauge is scalend down and wrapped in a container that maintains the original size
 .gauge-retina-wrapper {
-  width: 160px; 
-  height: 160px;  
-  
+  width: 160px;
+  height: 160px;
+
   ngx-gauge {
-    display: block; 
+    display: block;
     transform: scale(0.5);
     transform-origin: top left;
   }

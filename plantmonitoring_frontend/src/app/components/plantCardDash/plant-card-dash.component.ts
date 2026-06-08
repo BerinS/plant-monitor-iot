@@ -43,6 +43,10 @@ export class PlantCardDashComponent {
   readonly DropIcon = Droplets;
   readonly InfoIcon = Info;
 
-  isLow = computed(() => this.plant().currentMoisture < 30 && this.plant().currentMoisture !== null);
+  // "low" is driven by the plant's own DB threshold (null = no check configured, so never flagged)
+  isLow = computed(() => {
+    const { currentMoisture, moistureThreshold } = this.plant();
+    return currentMoisture != null && moistureThreshold != null && currentMoisture < moistureThreshold;
+  });
   noMoistureValue = computed(() => this.plant().currentMoisture === null);
 }
