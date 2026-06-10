@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Plus } from 'lucide-angular';
+import { LucideAngularModule, Plus, Copy } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
 
 import { ModalComponent } from '../../components/modal/modal.component';
@@ -21,6 +21,7 @@ import { SensorHealth } from '../../models/dashboard.model';
 })
 export class SensorsComponent {
   readonly Plus = Plus;
+  readonly Copy = Copy;
   private sensorService = inject(SensorService);
   private plantService = inject(PlantService);
   private groupService = inject(GroupService);
@@ -32,7 +33,8 @@ export class SensorsComponent {
   isModalOpen = signal(false);
   activeSensor = signal<Sensor | null>(null);
   modalType = signal<'default' | 'danger' | 'info'>('default');
-  modalMode = signal<'edit' | 'delete' | 'add' | 'default'>('default');
+  modalMode = signal<'edit' | 'delete' | 'add' | 'apiKey' | 'default'>('default');
+  createdApiKey = signal<string | null>(null);
   sensors = signal<Sensor[]>([]);
   sensorHealth = signal<SensorHealth[]>([]);
   sortMode = signal<'newest' | 'oldest' | 'name'>('newest');
@@ -117,6 +119,16 @@ export class SensorsComponent {
     this.isModalOpen.set(false);
     this.activeSensor.set(null);
     this.modalMode.set('default'); // Reset
+    this.createdApiKey.set(null);
+  }
+
+  copyApiKey() {
+    const key = this.createdApiKey();
+    if (!key) return;
+
+    navigator.clipboard.writeText(key).then(() => {
+      this.toastr.success('API key copied to clipboard.', 'Copied');
+    });
   }
 
   saveChanges() {
@@ -198,11 +210,16 @@ export class SensorsComponent {
       };
 
       this.sensorService.addSensor(payload).subscribe({
-        next: (createdSensorFromDb: Sensor) => {
-          this.closeModal();
-          this.toastr.success(`${payload.name} has been added.`, 'Success');
+        next: (createdSensorFromDb) => {
+          const { plainApiToken, ...sensor } = createdSensorFromDb;
 
-          this.sensors.update(currentSensors => [...currentSensors, createdSensorFromDb]);
+          this.toastr.success(`${payload.name} has been added.`, 'Success');
+          this.sensors.update(currentSensors => [...currentSensors, sensor]);
+
+          // show the one-time API key instead of closing the modal
+          this.activeSensor.set(sensor);
+          this.createdApiKey.set(plainApiToken);
+          this.modalMode.set('apiKey');
         },
         error: (err) => {
           console.error('Failed to add sensor. Error:', err);

@@ -36,9 +36,9 @@ export class SensorService {
     return this.http.delete(url);
   }
   
-  addSensor(payload: { name: string; macAddress: string | null; description: string }): Observable<Sensor> {
+  addSensor(payload: { name: string; macAddress: string | null; description: string }): Observable<Sensor & { plainApiToken: string }> {
     const url = `${this.apiUrl}/api/sensor`;
     console.log("Adding new sensor to API:", url);
-    return this.http.post<Sensor>(url, payload);
+    return this.http.post<Sensor & { plainApiToken: string }>(url, payload);
   }
 }

@@ -1,7 +1,7 @@
 <div class="sensor-card">
   <div class="sensor-header" style="justify-content: space-between;">
     <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <lucide-icon [img]="CircleDot" size="12" [class]="'status-dot status-' + status()" [attr.title]="status()"></lucide-icon>
+      <lucide-icon [img]="statusIcon()" size="16" [class]="'status-dot status-' + status()" [attr.title]="status()"></lucide-icon>
       <h3>{{ sensor().name || 'Unnamed Sensor' }}</h3>
     </div>
     
@@ -17,6 +17,10 @@
 
   <div class="sensor-body">
     <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Sensor ID</span>
+        <span class="value">#{{ sensor().id }}</span>
+      </div>
       <div class="info-item">
         <span class="label">MAC Address</span>
         <span class="value">{{ sensor().macAddress || 'Not assigned' }}</span>

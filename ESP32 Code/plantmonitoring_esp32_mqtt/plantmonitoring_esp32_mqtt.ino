@@ -13,7 +13,7 @@ const int   mqttPort     = 1883;
 
 // ── Device ID
 const char* mqttUsername = "9";
-const char* mqttPassword = "key";
+const char* mqttPassword = "";
 
 String telemetryTopic;
 String commandTopic;
@@ -26,7 +26,7 @@ const int WET_VALUE = 535;
 const int SENSOR_PIN = 36;
 const int POWER_PIN  = 17;
 const int BUTTON_PIN = 27;
-const int PUMP_PIN   = 25; // Relay IN 
+const int PUMP_PIN   = 26; // Relay IN 
 
 // ── Timing ───────────────────────────────────────────────────────────────────
 const unsigned long TIMER_DELAY        = 900000; // 15 minutes
