@@ -76,10 +76,10 @@ $mobile-break: 768px;
   color: #888;
 }
 
-.pen, .trash {
+.pen, .trash, .water {
   margin-left: 10px;
   transition: 0.1s ease-in-out;
-} 
+}
 
 .trash:hover {
   cursor: pointer;
@@ -89,6 +89,11 @@ $mobile-break: 768px;
 .pen:hover {
   cursor: pointer;
   color: var(--primary-color);
+}
+
+.water:hover {
+  cursor: pointer;
+  color: #1e8e3e;
 }
 
 .stats{

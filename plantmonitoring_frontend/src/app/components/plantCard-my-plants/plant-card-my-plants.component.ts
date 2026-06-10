@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
-import { LucideAngularModule, Droplets, Pen, Trash2 } from 'lucide-angular';
+import { LucideAngularModule, Droplets, Pen, Trash2, PaintBucket } from 'lucide-angular';
 import { Plant } from '../../models/plant.model'; 
 import { NgxGaugeModule } from 'ngx-gauge';
 
@@ -14,6 +14,7 @@ export class PlantCardMyPlants {
   readonly DropIcon = Droplets;
   readonly PenIcon = Pen;
   readonly TrashIcon = Trash2;
+  readonly PumpIcon = PaintBucket;
 
   plant = input.required<Plant>();
 
@@ -23,6 +24,7 @@ export class PlantCardMyPlants {
   });
   editRequest = output<Plant>();
   deleteRequest = output<Plant>();
+  waterRequest = output<Plant>();
 
   onEdit() {
     this.editRequest.emit(this.plant());
@@ -32,5 +34,9 @@ export class PlantCardMyPlants {
   onDelete() {
     this.deleteRequest.emit(this.plant());
     console.log('Delete requested for plant:', this.plant());
+  }
+
+  onWater() {
+    this.waterRequest.emit(this.plant());
   }
 }

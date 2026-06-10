@@ -17,10 +17,11 @@
 <div class="my-plants-grid">  
   @for (p of sortedPlants(); track p.id) {
     <div class="widget-card">
-      <app-plant-card-my-plants 
-        [plant]="p" 
+      <app-plant-card-my-plants
+        [plant]="p"
         (editRequest)="handleEdit($event)"
-        (deleteRequest)="handleDelete($event)">
+        (deleteRequest)="handleDelete($event)"
+        (waterRequest)="handleWater($event)">
       </app-plant-card-my-plants>
     </div>
   } 
@@ -29,7 +30,7 @@
 <app-modal 
   [type]="modalType()" 
   [isOpen]="isModalOpen()" 
-  [title]="modalMode() === 'add' ? 'Add New Plant' : modalMode() === 'edit' ? 'Edit Plant' : 'Delete Plant'"
+  [title]="modalMode() === 'add' ? 'Add New Plant' : modalMode() === 'edit' ? 'Edit Plant' : modalMode() === 'water' ? 'Water Plant' : 'Delete Plant'"
   (closed)="closeModal()">
   
   @if (activePlant(); as plant) {
@@ -103,6 +104,50 @@
             <button type="submit" class="btn-success" [disabled]="plantForm.invalid" [class.disabled]="plantForm.invalid">Add Plant</button>
           </div>
         </form>
+      }
+      @case ('water') {
+        <div class="water-content">
+          <p>
+            Manually run the pump for <strong>{{ plant.name }}</strong>.
+          </p>
+
+          <div class="form-group">
+            <label for="wateringDuration">Duration (seconds)</label>
+            <input
+              type="number"
+              id="wateringDuration"
+              name="wateringDuration"
+              #wateringDurationInput="ngModel"
+              [ngModel]="wateringDuration()"
+              (ngModelChange)="wateringDuration.set($event)"
+              [class.invalid]="!isWateringDurationValid()"
+              required
+              min="1"
+              max="8"
+              step="1">
+
+            @if (!isWateringDurationValid()) {
+              <span class="field-error">Enter a whole number between 1 and 8 seconds.</span>
+            }
+
+            <div class="duration-buttons">
+              <button type="button" (click)="adjustWateringDuration(-2)" [disabled]="wateringDuration() - 2 < 1">-2s</button>
+              <button type="button" (click)="adjustWateringDuration(-1)" [disabled]="wateringDuration() - 1 < 1">-1s</button>
+              <button type="button" (click)="adjustWateringDuration(1)" [disabled]="wateringDuration() + 1 > 8">+1s</button>
+              <button type="button" (click)="adjustWateringDuration(2)" [disabled]="wateringDuration() + 2 > 8">+2s</button>
+            </div>
+          </div>
+
+          <p class="warning">
+            Make sure there is water in the tank before activating the pump -
+            running it dry can damage the pump.
+          </p>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn-success" [disabled]="!isWateringDurationValid()" [class.disabled]="!isWateringDurationValid()" (click)="activatePump()">Activate Pump</button>
+          </div>
+        </div>
       }
       @case ('delete') {
         <div class="delete-content">

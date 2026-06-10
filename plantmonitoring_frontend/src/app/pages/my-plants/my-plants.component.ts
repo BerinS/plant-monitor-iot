@@ -26,7 +26,8 @@ export class MyPlantsComponent {
   isModalOpen = signal(false);
   activePlant = signal<Plant | null>(null);
   modalType = signal<'default' | 'danger' | 'info'>('default');
-  modalMode = signal<'edit' | 'delete' | 'add' | 'default'>('default');
+  modalMode = signal<'edit' | 'delete' | 'add' | 'water' | 'default'>('default');
+  wateringDuration = signal(1);
   plants = signal<Plant[]>([]); 
   sortMode = signal<'newest' | 'oldest' | 'name'>('newest');
   groups = toSignal(this.groupService.getGroups(), { initialValue: [] });
@@ -81,17 +82,59 @@ export class MyPlantsComponent {
 
   handleDelete(plant: Plant) {
     this.activePlant.set(plant);
-    this.modalType.set('danger'); 
-    this.modalMode.set('delete'); 
+    this.modalType.set('danger');
+    this.modalMode.set('delete');
     this.isModalOpen.set(true);
-  }  
+  }
+
+  isWateringDurationValid = computed(() => {
+    const value = this.wateringDuration();
+    return Number.isInteger(value) && value >= 1 && value <= 8;
+  });
+
+  adjustWateringDuration(delta: number) {
+    const next = Math.round(this.wateringDuration()) + delta;
+    if (next >= 1 && next <= 8) {
+      this.wateringDuration.set(next);
+    }
+  }
+
+  handleWater(plant: Plant) {
+    this.activePlant.set(plant);
+    this.wateringDuration.set(1);
+    this.modalType.set('info');
+    this.modalMode.set('water');
+    this.isModalOpen.set(true);
+  }
 
   closeModal() {
     this.isModalOpen.set(false);
     this.activePlant.set(null);
     this.modalMode.set('default'); // Reset
   }
- 
+
+  activatePump() {
+    const plant = this.activePlant();
+    if (!plant) return;
+
+    const duration = Math.min(8, Math.max(1, Math.round(this.wateringDuration())));
+
+    this.plantService.triggerWatering(plant.id, duration).subscribe({
+      next: (response) => {
+        this.closeModal();
+        this.toastr.success(
+          `${response.message} (${response.durationSeconds}s, device #${response.deviceId})`,
+          'Watering started'
+        );
+      },
+      error: (err) => {
+        console.error('Failed to trigger watering. Error:', err);
+        this.closeModal();
+        this.toastr.error(err?.error?.message || 'Could not start watering.', 'Error');
+      }
+    });
+  }
+
 
   saveChanges() {
     const updatedPlant = this.activePlant();

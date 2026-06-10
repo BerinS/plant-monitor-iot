@@ -36,4 +36,13 @@ export class PlantService {
     const url = `${this.apiUrl}/api/plants`;
     return this.http.post<Plant>(url, payload);
   }
+
+  triggerWatering(plantId: number, durationSeconds: number) {
+    const url = `${this.apiUrl}/api/watering/${plantId}`;
+    console.log("Triggering watering for plant:", plantId, "URL:", url);
+    return this.http.post<{ message: string; plantId: number; deviceId: number; durationSeconds: number }>(
+      url,
+      { durationSeconds }
+    );
+  }
 }

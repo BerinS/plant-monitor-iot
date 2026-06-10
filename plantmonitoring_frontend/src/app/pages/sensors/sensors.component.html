@@ -29,7 +29,7 @@
 <app-modal 
   [type]="modalType()" 
   [isOpen]="isModalOpen()" 
-  [title]="modalMode() === 'add' ? 'Add New Sensor' : modalMode() === 'edit' ? 'Edit Sensor' : 'Delete Sensor'"
+  [title]="modalMode() === 'add' ? 'Add New Sensor' : modalMode() === 'edit' ? 'Edit Sensor' : modalMode() === 'apiKey' ? 'Sensor API Key' : 'Delete Sensor'"
   (closed)="closeModal()">
   
   @if (activeSensor(); as sensor) {
@@ -121,6 +121,29 @@
             <button type="submit" class="btn-success" [disabled]="sensorForm.invalid" [class.disabled]="sensorForm.invalid">Add Sensor</button>
           </div>
         </form>
+      }
+      @case ('apiKey') {
+        <div class="api-key-content">
+          <p>
+            <strong>{{ sensor.name }}</strong> (ID: #{{ sensor.id }}) was created successfully.
+          </p>
+
+          <p class="warning">
+            Copy this API key and store it somewhere safe. For security reasons it
+            will <strong>not be shown again</strong>.
+          </p>
+
+          <div class="api-key-box">
+            <code>{{ createdApiKey() }}</code>
+            <button type="button" class="btn-copy" (click)="copyApiKey()" title="Copy to clipboard">
+              <lucide-icon [img]="Copy" size="18"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-success" (click)="closeModal()">Done</button>
+          </div>
+        </div>
       }
       @case ('delete') {
         <div class="delete-content">

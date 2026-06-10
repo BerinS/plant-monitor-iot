@@ -4,14 +4,17 @@
       <lucide-icon [img]="DropIcon" size="16" class="drop-icon" [class.low]="isLow()"></lucide-icon>
       <h3>{{ plant().name }}</h3>
     </div>
-    <div class="corner-icon">      
+    <div class="corner-icon">
+      <span class="water" (click)="onWater()" title="Water now">
+        <lucide-icon [img]="PumpIcon" size="20"></lucide-icon>
+      </span>
       <span class="pen" (click)="onEdit()">
         <lucide-icon [img]="PenIcon" size="20"></lucide-icon>
-      </span>  
+      </span>
       <span class="trash" (click)="onDelete()">
         <lucide-icon [img]="TrashIcon" size="20"></lucide-icon>
       </span>
-    </div>      
+    </div>
   </div>   
   
   <div class="wrapper">    
