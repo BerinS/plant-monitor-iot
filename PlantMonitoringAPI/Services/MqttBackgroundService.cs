@@ -208,7 +208,7 @@ namespace PlantMonitoringAPI.Services
                 : NotificationSeverity.Warning;
         }
 
-        public async Task<bool> SendCommandAsync(int deviceId, object command)
+        public virtual async Task<bool> SendCommandAsync(int deviceId, object command)
         {
             if (_mqttClient == null || !_mqttClient.IsConnected)
             {

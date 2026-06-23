@@ -51,3 +51,6 @@ app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+// Exposed for WebApplicationFactory<Program> in the integration test project.
+public partial class Program { }
