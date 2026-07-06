@@ -1,0 +1,56 @@
+<div class="widget-card">
+  <div class="card-header">
+    <div class="card-title">
+      <lucide-icon [img]="LogIcon" size="20"></lucide-icon>
+      <h2>Event Log</h2>
+    </div>
+
+    <div class="range-buttons">
+      @for (option of ranges; track option.value) {
+        <button
+          type="button"
+          [class.active]="range() === option.value"
+          (click)="setRange(option.value)">
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="state-text">Loading events…</p>
+  } @else if (error()) {
+    <p class="state-text">Could not load the event log.</p>
+  } @else if (entries().length === 0) {
+    <p class="state-text">No events recorded for this range.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            @for (header of headers; track header) {
+              <th>{{ header }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of entries(); track entry.id) {
+            <tr>
+              @for (header of headers; track header) {
+                <td>
+                  @if (isDate(header)) {
+                    {{ entry.createdAt | date: 'HH:mm | dd/MM/yyyy' }}
+                  } @else if (cell(entry, header) === '') {
+                    <span class="muted">—</span>
+                  } @else {
+                    {{ cell(entry, header) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

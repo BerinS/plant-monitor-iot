@@ -1,0 +1,103 @@
+@if (loading()) {
+  <div class="widget-card state-card">
+    <p>Loading settings…</p>
+  </div>
+} @else {
+  <form class="settings-form" (submit)="save(); $event.preventDefault()">
+    <div class="widget-card">
+      <div class="card-header">
+        <div class="card-title">
+          <lucide-icon [img]="MailIcon" size="20"></lucide-icon>
+          <h2>Email Notifications</h2>
+        </div>
+        @if (lastUpdated()) {
+          <span class="last-updated">Updated {{ lastUpdated() | date: 'HH:mm | dd/MM/yyyy' }}</span>
+        }
+      </div>
+
+      <div class="fields">
+        @for (field of fields(); track field.key) {
+          @if (field.type === 'toggle') {
+            <div class="toggle-row">
+              <div class="toggle-text">
+                <span class="toggle-label">{{ field.label }}</span>
+                @if (field.hint) {
+                  <span class="hint">{{ field.hint }}</span>
+                }
+              </div>
+              <button
+                type="button"
+                class="switch"
+                role="switch"
+                [attr.aria-checked]="formValues()[field.key] === 'true'"
+                [class.on]="formValues()[field.key] === 'true'"
+                (click)="toggle(field.key)">
+                <span class="knob"></span>
+              </button>
+            </div>
+          } @else {
+            <div class="form-group" [class.disabled]="isFieldDisabled(field)">
+              <label [for]="field.key">{{ field.label }}</label>
+
+              @if (field.type === 'password') {
+                <div class="password-wrapper">
+                  <input
+                    [id]="field.key"
+                    [name]="field.key"
+                    [type]="revealPassword() ? 'text' : 'password'"
+                    [ngModel]="formValues()[field.key]"
+                    (ngModelChange)="updateValue(field.key, $event)"
+                    [placeholder]="field.placeholder || ''"
+                    [disabled]="isFieldDisabled(field)"
+                    autocomplete="off">
+                  <button
+                    type="button"
+                    class="reveal-btn"
+                    (click)="revealPassword.set(!revealPassword())"
+                    [attr.aria-label]="revealPassword() ? 'Hide password' : 'Show password'"
+                    [disabled]="isFieldDisabled(field)">
+                    <lucide-icon [img]="revealPassword() ? EyeOffIcon : EyeIcon" size="18"></lucide-icon>
+                  </button>
+                </div>
+              } @else {
+                <input
+                  [id]="field.key"
+                  [name]="field.key"
+                  [type]="field.type"
+                  [ngModel]="formValues()[field.key]"
+                  (ngModelChange)="updateValue(field.key, $event)"
+                  [placeholder]="field.placeholder || ''"
+                  [disabled]="isFieldDisabled(field)">
+              }
+
+              @if (field.hint) {
+                <span class="hint">{{ field.hint }}</span>
+              }
+            </div>
+          }
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn-cancel"
+          (click)="reset()"
+          [disabled]="!isDirty() || saving()">
+          <lucide-icon [img]="ResetIcon" size="16"></lucide-icon>
+          Reset
+        </button>
+        <button
+          type="submit"
+          class="btn-success"
+          [disabled]="!isDirty() || saving()"
+          [class.disabled]="!isDirty() || saving()">
+          <lucide-icon [img]="SaveIcon" size="16"></lucide-icon>
+          {{ saving() ? 'Saving…' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+  </form>
+}
+
+<app-event-log-viewer class="event-log-section" />

@@ -1,0 +1,99 @@
+@if (loading()) {
+  <div class="state">
+    <p>Loading groups…</p>
+  </div>
+} @else if (groupsWithPlants().length === 0) {
+  <div class="state">
+    <lucide-icon [img]="EmptyIcon" size="30"></lucide-icon>
+    <p>No groups have been created yet.</p>
+  </div>
+} @else {
+  <div class="groups-list">
+    @for (group of groupsWithPlants(); track group.id) {
+      <div class="widget-card group-card">
+        <div class="group-header">
+          <div class="group-title">
+            <lucide-icon [img]="GroupIcon" size="22"></lucide-icon>
+            <h2>{{ group.name }}</h2>
+            <span class="id-badge">#{{ group.id }}</span>
+          </div>
+          <span class="count-badge">
+            {{ group.plants.length }} {{ group.plants.length === 1 ? 'plant' : 'plants' }}
+          </span>
+        </div>
+
+        @if (group.plants.length > 0) {
+          <div class="plants-grid">
+            @for (plant of group.plants; track plant.id) {
+              <div class="plant-item" [class.low]="isLow(plant)">
+                <div class="plant-top">
+                  <lucide-icon [img]="LeafIcon" size="16" class="leaf-icon"></lucide-icon>
+                  <span class="plant-name">{{ plant.name }}</span>
+                </div>
+
+                <div class="plant-meta">
+                  <span class="moisture" [class.low]="isLow(plant)">
+                    <lucide-icon [img]="DropIcon" size="13"></lucide-icon>
+                    {{ plant.currentMoisture != null ? plant.currentMoisture + '%' : '—' }}
+                  </span>
+                  <span class="sep">&middot;</span>
+                  <span class="threshold">
+                    Threshold:
+                    {{ plant.moistureThreshold != null ? plant.moistureThreshold + '%' : 'none' }}
+                  </span>
+                </div>
+
+                <div class="plant-sensor">
+                  {{ plant.sensorName || 'No sensor assigned' }}
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-group">No plants in this group yet.</p>
+        }
+      </div>
+    }
+
+    @if (ungrouped().length > 0) {
+      <div class="widget-card group-card ungrouped">
+        <div class="group-header">
+          <div class="group-title">
+            <lucide-icon [img]="EmptyIcon" size="22"></lucide-icon>
+            <h2>Ungrouped</h2>
+          </div>
+          <span class="count-badge">
+            {{ ungrouped().length }} {{ ungrouped().length === 1 ? 'plant' : 'plants' }}
+          </span>
+        </div>
+
+        <div class="plants-grid">
+          @for (plant of ungrouped(); track plant.id) {
+            <div class="plant-item" [class.low]="isLow(plant)">
+              <div class="plant-top">
+                <lucide-icon [img]="LeafIcon" size="16" class="leaf-icon"></lucide-icon>
+                <span class="plant-name">{{ plant.name }}</span>
+              </div>
+
+              <div class="plant-meta">
+                <span class="moisture" [class.low]="isLow(plant)">
+                  <lucide-icon [img]="DropIcon" size="13"></lucide-icon>
+                  {{ plant.currentMoisture != null ? plant.currentMoisture + '%' : '—' }}
+                </span>
+                <span class="sep">&middot;</span>
+                <span class="threshold">
+                  Threshold:
+                  {{ plant.moistureThreshold != null ? plant.moistureThreshold + '%' : 'none' }}
+                </span>
+              </div>
+
+              <div class="plant-sensor">
+                {{ plant.sensorName || 'No sensor assigned' }}
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

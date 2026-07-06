@@ -19,4 +19,10 @@ export class NotificationService {
     console.log(`Marking notification ${id} as read at API:`, url);
     return this.http.patch<{ message: string }>(url, {});
   }
+
+  markAllAsRead() {
+    const url = `${this.apiUrl}/api/notifications/read-all`;
+    console.log('Marking all notifications as read at API:', url);
+    return this.http.patch<{ message: string; updated: number }>(url, {});
+  }
 }

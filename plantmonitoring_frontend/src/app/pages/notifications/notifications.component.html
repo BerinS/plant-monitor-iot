@@ -1,0 +1,76 @@
+<div class="page-header">
+  <div class="heading">
+    <h1>Notifications</h1>
+    <p class="subtitle">
+      {{ unreadCount() }} unread &middot; {{ notifications().length }} total
+    </p>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters">
+      <button type="button" [class.active]="filter() === 'all'" (click)="setFilter('all')">
+        All
+      </button>
+      <button type="button" [class.active]="filter() === 'unread'" (click)="setFilter('unread')">
+        Unread
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="mark-all"
+      [disabled]="unreadCount() === 0 || markingAll()"
+      (click)="markAllAsRead()">
+      <lucide-icon [img]="CheckAllIcon" size="16"></lucide-icon>
+      Mark all as read
+    </button>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="state">
+    <p>Loading notifications…</p>
+  </div>
+} @else if (error()) {
+  <div class="state">
+    <lucide-icon [img]="InboxIcon" size="30"></lucide-icon>
+    <p>Could not load notifications.</p>
+  </div>
+} @else if (filtered().length === 0) {
+  <div class="state">
+    <lucide-icon [img]="InboxIcon" size="30"></lucide-icon>
+    <p>{{ filter() === 'unread' ? 'No unread notifications.' : 'No notifications to show.' }}</p>
+  </div>
+} @else {
+  <div class="alerts-grid">
+    @for (notification of filtered(); track notification.id) {
+      <div class="alert-row" [class.read]="notification.isRead" [class]="'severity-' + notification.severity">
+        <div class="alert-top">
+          <div class="alert-heading">
+            <lucide-icon [img]="severityIcon(notification.severity)" size="16" class="severity-icon"></lucide-icon>
+            <span class="alert-title">{{ notification.title }}</span>
+          </div>
+          <span class="alert-time">{{ timeSince(notification.createdAt) }}</span>
+        </div>
+
+        <p class="alert-message">{{ notification.message }}</p>
+
+        <div class="alert-bottom">
+          <span class="alert-plant">{{ notification.plantName ?? 'System' }}</span>
+
+          @if (!notification.isRead) {
+            <button class="mark-read" (click)="markAsRead(notification)">
+              <lucide-icon [img]="CheckIcon" size="13"></lucide-icon>
+              Mark as read
+            </button>
+          } @else {
+            <span class="read-label">
+              <lucide-icon [img]="CheckIcon" size="13"></lucide-icon>
+              Read
+            </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

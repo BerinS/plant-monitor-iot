@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  --low-color: #ca1b18;
+}
+
+.page-header {
+  margin-bottom: 1.4rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color-dark);
+  }
+
+  .subtitle {
+    margin: 0.3rem 0 0;
+    font-size: 0.95rem;
+    color: #777;
+  }
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 240px;
+  color: #888;
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+// Each group is a full-width card, stacked vertically.
+.groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.widget-card {
+  background: var(--bg-color-light);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: rgba(17, 17, 26, 0.027) 0px 1px 0px, rgba(17, 17, 26, 0.055) 0px 0px 5px;
+}
+
+.group-card {
+  border-left: 3px solid var(--primary-color);
+
+  &.ungrouped {
+    border-left-color: #bbb;
+  }
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #eee;
+
+  .group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--primary-color);
+
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-color-dark);
+    }
+
+    .id-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #999;
+    }
+  }
+
+  .count-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    background-color: #f1f1f1;
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+  }
+}
+
+.ungrouped .group-title {
+  color: #888;
+}
+
+// Plants tile responsively within a group card.
+.plants-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+.plant-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: #bbb;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 6px;
+  }
+
+  &.low {
+    border-color: rgba(202, 27, 24, 0.35);
+  }
+}
+
+.plant-top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+
+  .leaf-icon {
+    flex: 0 0 auto;
+    color: var(--primary-color);
+  }
+
+  .plant-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.plant-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #777;
+  flex-wrap: wrap;
+
+  .moisture {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+    color: #3f8f57;
+
+    &.low {
+      color: var(--low-color);
+    }
+  }
+
+  .sep {
+    color: #ccc;
+  }
+}
+
+.plant-sensor {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: #999;
+}
+
+.empty-group {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #999;
+  font-style: italic;
+}

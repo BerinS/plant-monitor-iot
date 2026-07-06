@@ -1,0 +1,111 @@
+.widget-card {
+  background: var(--bg-color-light);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: rgba(17, 17, 26, 0.027) 0px 1px 0px, rgba(17, 17, 26, 0.055) 0px 0px 5px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #eee;
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+
+    h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-color-dark);
+    }
+  }
+}
+
+.range-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+
+  button {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 999px;
+    background-color: #fff;
+    color: #555;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: #999;
+    }
+
+    &.active {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: #fff;
+    }
+  }
+}
+
+.state-text {
+  margin: 0;
+  padding: 1rem 0;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+// Becomes scrollable (vertically past ~10 rows, horizontally on narrow screens)
+.table-wrapper {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f7f7f7;
+  color: #555;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+tbody td {
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover td {
+  background-color: #fafafa;
+}
+
+.muted {
+  color: #bbb;
+}

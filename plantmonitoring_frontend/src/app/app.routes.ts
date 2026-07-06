@@ -4,6 +4,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MyPlantsComponent } from './pages/my-plants/my-plants.component';
 import { SensorsComponent } from './pages/sensors/sensors.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { SettingsComponent } from './pages/settings/settings.component';
+import { GroupsComponent } from './pages/groups/groups.component';
 
 export const routes: Routes = [
   {
@@ -28,8 +30,16 @@ export const routes: Routes = [
         component: SensorsComponent
       },
       {
+        path: 'groups',
+        component: GroupsComponent
+      },
+      {
         path: 'notifications',
         component: NotificationsComponent
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent
       }
 
     ]

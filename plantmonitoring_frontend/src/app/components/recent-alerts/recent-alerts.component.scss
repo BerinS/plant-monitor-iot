@@ -50,7 +50,9 @@ $mobile-break: 768px;
 }
 
 .alerts-list {
-  flex: 1;
+  // Cap the list at roughly two alert rows: up to 2 fit without scrolling,
+  // 3+ overflow and the list scrolls internally instead of growing the card.
+  max-height: 250px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;

@@ -1,0 +1,221 @@
+$mobile-break: 768px;
+
+:host {
+  display: block;
+  --info-color: #3b82f6;
+  --warning-color: #e0a429;
+  --critical-color: #cc4442;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.4rem;
+
+  .heading {
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color-dark);
+    }
+
+    .subtitle {
+      margin: 0.3rem 0 0;
+      font-size: 0.95rem;
+      color: #777;
+    }
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  gap: 0.4rem;
+
+  button {
+    padding: 0.45rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 999px;
+    background-color: #fff;
+    color: #555;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: #999;
+    }
+
+    &.active {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: #fff;
+    }
+  }
+}
+
+.mark-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  background-color: #fff;
+  color: #444;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 240px;
+  color: #888;
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+// Tiles the alert cards across the page: 1 column on mobile, filling
+// as many ~320px columns as fit on wider screens.
+.alerts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: $mobile-break) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+// --- Alert card design carried over from the recent-alerts widget ---
+.alert-row {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--info-color);
+  transition: opacity 0.15s, border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: #bbb;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 6px;
+  }
+
+  &.severity-warning { border-left-color: var(--warning-color); }
+  &.severity-critical { border-left-color: var(--critical-color); }
+
+  &.read {
+    opacity: 0.55;
+  }
+}
+
+.alert-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.alert-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.severity-icon {
+  flex: 0 0 auto;
+  color: var(--info-color);
+}
+
+.alert-row.severity-warning .severity-icon { color: var(--warning-color); }
+.alert-row.severity-critical .severity-icon { color: var(--critical-color); }
+
+.alert-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alert-time {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.alert-message {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.alert-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 0.75rem;
+}
+
+.alert-plant {
+  color: #888;
+}
+
+.mark-read,
+.read-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.read-label {
+  color: #999;
+}
+
+.mark-read {
+  border: none;
+  background: none;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}

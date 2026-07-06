@@ -2,12 +2,13 @@ import { Component, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { 
   LucideAngularModule, 
-  LayoutDashboard, 
-  Leaf, 
-  Settings, 
+  LayoutDashboard,
+  Leaf,
+  Settings,
   X,
   SatelliteDish,
-  Group
+  Group,
+  Bell
 } from 'lucide-angular';
 
 @Component({
@@ -43,6 +44,11 @@ import {
         <span>Groups</span>
       </a>
 
+      <a routerLink="/notifications" routerLinkActive="active">
+        <lucide-icon [img]="NotificationsIcon" size="21"></lucide-icon>
+        <span>Notifications</span>
+      </a>
+
       <a routerLink="/settings" routerLinkActive="active">
         <lucide-icon [img]="SettingsIcon" size="21"></lucide-icon>
         <span>Settings</span>
@@ -63,5 +69,6 @@ export class SidebarComponent {
   readonly CloseIcon = X;
   readonly SatelliteDish = SatelliteDish;
   readonly GroupsIcon = Group;
-  
+  readonly NotificationsIcon = Bell;
+
 }
