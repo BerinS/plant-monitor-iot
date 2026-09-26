@@ -16,3 +16,7 @@ plantmonitoring_backup.sql
 *.psd
 
 Images/OG Images/
+
+# .NET build output
+bin/
+obj/
