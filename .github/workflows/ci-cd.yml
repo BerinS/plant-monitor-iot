@@ -1,0 +1,37 @@
+name: CI/CD
+
+on:
+  pull_request:            # run tests on every PR 
+  push:
+    branches: [main]       # full pipeline on main
+
+# Default GITHUB_TOKEN can only read code
+permissions:
+  contents: read
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4          # clone the repo onto the runner
+      - uses: actions/setup-dotnet@v4      # install the .NET SDK
+        with:
+          dotnet-version: '10.0.x'
+      - name: Run tests
+        run: dotnet test PlantMonitoringAPI.Tests/PlantMonitoringAPI.Tests.csproj --configuration Release
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plantmonitoring_frontend   # every `run:` executes in this folder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm                                   # reuse ~/.npm between runs 
+          cache-dependency-path: plantmonitoring_frontend/package-lock.json
+      - run: npm ci --legacy-peer-deps                 # same flag as your Dockerfile
+      - run: npx ng build --configuration production   # catches template/type errors
+      
