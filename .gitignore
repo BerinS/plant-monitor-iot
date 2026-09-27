@@ -20,3 +20,5 @@ Images/OG Images/
 # .NET build output
 bin/
 obj/
+
+.deploy.env

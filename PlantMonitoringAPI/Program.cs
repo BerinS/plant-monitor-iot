@@ -50,6 +50,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 app.MapControllers();
+
+// Liveness probe used by the deploy script (reached via nginx → /api/health).
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
+
 app.Run();
 
 // Exposed for WebApplicationFactory<Program> in the integration test project.

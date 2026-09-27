@@ -11,6 +11,11 @@ services:
     networks:
       - plant-net
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   emqx:
     image: emqx/emqx:5.8
@@ -18,7 +23,7 @@ services:
       EMQX_NODE__NAME: emqx@127.0.0.1
     ports:
       - "1883:1883"   # MQTT
-      - "18083:18083" # Dashboard
+      - "127.0.0.1:18083:18083" # Dashboard
     depends_on:
       - postgres
     networks:
@@ -26,6 +31,7 @@ services:
     restart: always
 
   backend:
+    image: ghcr.io/berins/plant-monitor-iot-backend:${IMAGE_TAG:-latest}
     build: ./PlantMonitoringAPI
     environment:
       ConnectionStrings__DefaultConnection: "Host=postgres;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
@@ -34,13 +40,16 @@ services:
       Mqtt__Username:   "backend-service"
       Mqtt__Password:   ${MQTT_BACKEND_PASSWORD}
     depends_on:
-      - postgres
-      - emqx
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_started
     networks:
       - plant-net
     restart: always
 
   frontend:
+    image: ghcr.io/berins/plant-monitor-iot-frontend:${IMAGE_TAG:-latest}
     build: ./plantmonitoring_frontend
     ports:
       - "80:80"
