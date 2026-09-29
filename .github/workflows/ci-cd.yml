@@ -67,4 +67,10 @@ jobs:
           labels: org.opencontainers.image.source=https://github.com/BerinS/plant-monitor-iot
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  deploy:
+    needs: build-push                  # skipped automatically if build-push was skipped/failed
+    uses: ./.github/workflows/deploy.yml
+    with:
+      image_tag: sha-${{ github.sha }}
       

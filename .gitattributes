@@ -1,0 +1,5 @@
+# Let Git normalise line endings for text files
+* text=auto
+
+# Shell scripts must always have LF, even in Windows working copies
+*.sh text eol=lf
