@@ -1,0 +1,62 @@
+name: Deploy to VM
+
+# Connects to VM and runs scripts/deploy.sh 
+on:
+  workflow_call:              # called by ci-cd.yml after a successful build
+    inputs:
+      image_tag:
+        type: string
+        required: true
+  workflow_dispatch:          # "Run workflow" button in the Actions tab (manual deploys/rollbacks)
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy, e.g. sha-<commit hash> or latest'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production        # unlocks the environment secrets (main branch only)
+      # url: https://<your-plants-web-hostname>   # optional: link to the site on the run page
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false   # queue deploys, never kill one halfway
+    steps:
+      - name: Install cloudflared
+        run: |
+          curl -fsSL -o cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared.deb
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          # $SSH_HOST/$SSH_USER expand now; \$CF_ID/\$CF_SECRET expand only when ssh
+          # runs the ProxyCommand, so the Cloudflare secret never touches the disk.
+          cat > ~/.ssh/config <<EOF
+          Host plant-vm
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            BatchMode yes
+            ProxyCommand cloudflared access ssh --hostname %h --id "\$CF_ID" --secret "\$CF_SECRET"
+          EOF
+
+      - name: Deploy
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          CF_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+        run: ssh plant-vm "$IMAGE_TAG"
