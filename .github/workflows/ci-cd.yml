@@ -71,6 +71,7 @@ jobs:
   deploy:
     needs: build-push                  # skipped automatically if build-push was skipped/failed
     uses: ./.github/workflows/deploy.yml
+    secrets: inherit
     with:
       image_tag: sha-${{ github.sha }}
       
